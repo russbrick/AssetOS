@@ -166,7 +166,7 @@ textarea{width:100%;background:var(–s2);border:1px solid var(–bd);color:var(
     <div class="gate-title">SECURE ACCESS</div>
     <div class="gate-sub">Team members only</div>
     <input class="gate-in" type="password" id="pw-input" placeholder="Enter password" autocomplete="current-password" />
-    <button class="gate-btn" onclick="(async()=>{const v=document.getElementById('pw-input').value;if(!v)return;this.textContent='CHECKING...';this.disabled=true;try{const r=await fetch('/.netlify/functions/check-pw',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:v})});const d=await r.json();if(d.ok){sessionStorage.setItem('rs-auth','1');document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';try{loadTargets();initNav();renderAll();}catch(e){document.body.innerHTML='<div style=padding:40px;font-family:monospace;color:#EF4444;background:#0F1410><h2>Error</h2><pre>'+e.message+'</pre></div>';}}else{document.getElementById('pw-err').textContent='Incorrect password';document.getElementById('pw-err').style.display='block';document.getElementById('pw-input').value='';this.textContent='ENTER THE PLATFORM \u2192';this.disabled=false;}}}catch(e){document.getElementById('pw-err').textContent='Error: '+e.message;document.getElementById('pw-err').style.display='block';this.textContent='ENTER THE PLATFORM \u2192';this.disabled=false;}})()">ENTER THE PLATFORM →</button>
+    <button class="gate-btn" onclick="checkPw()">ENTER THE PLATFORM →</button>
     <div id="pw-err" class="gate-err" style="display:none">Incorrect password</div>
     <div class="gate-hint">Contact Russ for access</div>
   </div>
@@ -207,172 +207,179 @@ textarea{width:100%;background:var(–s2);border:1px solid var(–bd);color:var(
 </div>
 
 <script>
+window.onerror = function(msg,src,line,col,err){
+  document.body.innerHTML = '<div style="padding:40px;font-family:monospace;color:#EF4444;background:#0F1410;min-height:100vh"><h2>JS ERROR</h2><pre style="margin-top:20px;white-space:pre-wrap">'+msg+"\nLine: "+line+"\n"+(err?err.stack:"")+"</pre></div>";
+
+return true;
+};
+
 /* ════════════════════════════════════════════
-   CONFIG — password set via Netlify env var WEBSITE_PW
+CONFIG — password set via Netlify env var WEBSITE_PW
 ════════════════════════════════════════════ */
 
 /* ════════════════════════════════════════════
-   DATA
+DATA
 ════════════════════════════════════════════ */
-const STAGES = ["Prospecting","Assessment","Agreement","Marketing","Negotiation","Closed"];
-const STAGE_CLR = {Prospecting:"#505050",Assessment:"#3B82F6",Agreement:"#F59E0B",Marketing:"#8B5CF6",Negotiation:"#F97316",Closed:"#4CAF76"};
+const STAGES = [“Prospecting”,“Assessment”,“Agreement”,“Marketing”,“Negotiation”,“Closed”];
+const STAGE_CLR = {Prospecting:”#505050”,Assessment:”#3B82F6”,Agreement:”#F59E0B”,Marketing:”#8B5CF6”,Negotiation:”#F97316”,Closed:”#4CAF76”};
 const PRIORITY_META = {
-  critical:{label:"CRITICAL",fg:"#EF4444",bg:"#EF444418"},
-  high:    {label:"HIGH",    fg:"#F59E0B",bg:"#F59E0B18"},
-  medium:  {label:"MEDIUM",  fg:"#3B82F6",bg:"#3B82F618"},
-  low:     {label:"LOW",     fg:"#6B7280",bg:"#6B728018"},
+critical:{label:“CRITICAL”,fg:”#EF4444”,bg:”#EF444418”},
+high:    {label:“HIGH”,    fg:”#F59E0B”,bg:”#F59E0B18”},
+medium:  {label:“MEDIUM”,  fg:”#3B82F6”,bg:”#3B82F618”},
+low:     {label:“LOW”,     fg:”#6B7280”,bg:”#6B728018”},
 };
 
 const DEFAULT_TARGETS = [
-  {id:1,company:"KRP Transport",location:"Burlington, NJ",industry:"Transportation / Logistics",workers:298,date:"Sep 2025",assets:["Semi Trucks (50+)","Trailers","Forklifts","Dock Equipment","GPS/Telematics Systems","Fuel Tanks"],low:2000000,high:5000000,priority:"critical",stage:"Prospecting",contact:"",notes:"Full transport shutdown. Fleet liquidation — 50 trucks avg $60K = $3M. Move immediately."},
-  {id:2,company:"TransAxle",location:"Cinnaminson, NJ",industry:"Auto Parts Manufacturing",workers:200,date:"Aug-Sep 2025",assets:["Assembly Equipment","Hydraulic Presses","Conveyor Systems","Parts Inventory","Warehouse Racking","Tooling & Dies"],low:300000,high:800000,priority:"critical",stage:"Prospecting",contact:"Marty Halle (CFO)",notes:"Complete manufacturing shutdown. Auto parts equipment sells well in Mexico and Eastern Europe."},
-  {id:3,company:"Barrette Outdoor Living",location:"Egg Harbor City, NJ",industry:"Outdoor Products Mfg",workers:120,date:"Jul 2025",assets:["Extrusion Equipment","Molds & Dies","Vinyl Processing Machinery","Raw Material Inventory","Warehouse Racking"],low:200000,high:600000,priority:"high",stage:"Prospecting",contact:"",notes:"Molds and dies worth $50-200K. Strong international demand for extrusion equipment."},
-  {id:4,company:"Seviroli Foods",location:"Bellmawr, NJ",industry:"Food Manufacturing",workers:77,date:"Aug 2025",assets:["Food Processing Equipment","Packaging Lines","Stainless Steel Tanks","Refrigeration Units","Conveyor Systems"],low:150000,high:400000,priority:"high",stage:"Prospecting",contact:"Paul Vertullo (CEO)",notes:"SS food processing in strong international demand — Latin America, SE Asia especially."},
-  {id:5,company:"Alstom Transportation",location:"Camden, NJ",industry:"Rail & Transit Equipment",workers:117,date:"Feb 2025",assets:["Rail Maintenance Equipment","Diagnostic Tools","Vehicle Components","Workshop Machinery","Specialized Tooling"],low:200000,high:500000,priority:"high",stage:"Prospecting",contact:"",notes:"Specialized buyer pool — transit authorities and rail contractors."},
-  {id:6,company:"Pioneer Credit Recovery",location:"Burlington, NJ",industry:"Financial Services",workers:180,date:"Mar 2026",assets:["Servers & Networking","Workstations (180)","Call Center Equipment","Office Furniture","Filing Systems"],low:50000,high:150000,priority:"medium",stage:"Prospecting",contact:"",notes:"Filed Dec 2025 — window open NOW. 180 workstations + server infrastructure."},
-  {id:7,company:"Jefferson Health",location:"Cherry Hill, NJ",industry:"Healthcare",workers:108,date:"Jan 2026",assets:["Medical Equipment","Diagnostic Tools","IT Infrastructure","Exam Furniture","Lab Equipment"],low:75000,high:200000,priority:"medium",stage:"Prospecting",contact:"",notes:"Package with HIPAA data destruction as bundled service — differentiates and adds margin."},
-  {id:8,company:"Ready Pac Produce",location:"Florence, NJ",industry:"Food Processing",workers:75,date:"Apr 2025",assets:["Cold Storage Units","Packaging Equipment","Processing Lines","Refrigerated Fleet","Warehouse Racking"],low:100000,high:300000,priority:"medium",stage:"Prospecting",contact:"",notes:"Cold chain equipment in high domestic demand. Refrigerated fleet sells in days."},
-  {id:9,company:"Iron Hill Brewery",location:"Maple Shade, NJ",industry:"Food & Beverage",workers:108,date:"Sep-Oct 2025",assets:["Fermentation Tanks","Kegging Lines","Refrigeration Systems","Draft Systems","Restaurant Equipment"],low:80000,high:220000,priority:"medium",stage:"Prospecting",contact:"",notes:"Active craft brewery secondary market. Fermentation tanks sell in days."},
-  {id:10,company:"TTEC Government Solutions",location:"Egg Harbor, NJ",industry:"Government / Call Center",workers:120,date:"Jan 2026",assets:["Workstations (120)","Servers","Networking Equipment","Headsets & AV","Office Furniture"],low:40000,high:120000,priority:"medium",stage:"Prospecting",contact:"",notes:"120-seat call center. ITAD brokers will buy the lot outright within a week."},
+{id:1,company:“KRP Transport”,location:“Burlington, NJ”,industry:“Transportation / Logistics”,workers:298,date:“Sep 2025”,assets:[“Semi Trucks (50+)”,“Trailers”,“Forklifts”,“Dock Equipment”,“GPS/Telematics Systems”,“Fuel Tanks”],low:2000000,high:5000000,priority:“critical”,stage:“Prospecting”,contact:””,notes:“Full transport shutdown. Fleet liquidation — 50 trucks avg $60K = $3M. Move immediately.”},
+{id:2,company:“TransAxle”,location:“Cinnaminson, NJ”,industry:“Auto Parts Manufacturing”,workers:200,date:“Aug-Sep 2025”,assets:[“Assembly Equipment”,“Hydraulic Presses”,“Conveyor Systems”,“Parts Inventory”,“Warehouse Racking”,“Tooling & Dies”],low:300000,high:800000,priority:“critical”,stage:“Prospecting”,contact:“Marty Halle (CFO)”,notes:“Complete manufacturing shutdown. Auto parts equipment sells well in Mexico and Eastern Europe.”},
+{id:3,company:“Barrette Outdoor Living”,location:“Egg Harbor City, NJ”,industry:“Outdoor Products Mfg”,workers:120,date:“Jul 2025”,assets:[“Extrusion Equipment”,“Molds & Dies”,“Vinyl Processing Machinery”,“Raw Material Inventory”,“Warehouse Racking”],low:200000,high:600000,priority:“high”,stage:“Prospecting”,contact:””,notes:“Molds and dies worth $50-200K. Strong international demand for extrusion equipment.”},
+{id:4,company:“Seviroli Foods”,location:“Bellmawr, NJ”,industry:“Food Manufacturing”,workers:77,date:“Aug 2025”,assets:[“Food Processing Equipment”,“Packaging Lines”,“Stainless Steel Tanks”,“Refrigeration Units”,“Conveyor Systems”],low:150000,high:400000,priority:“high”,stage:“Prospecting”,contact:“Paul Vertullo (CEO)”,notes:“SS food processing in strong international demand — Latin America, SE Asia especially.”},
+{id:5,company:“Alstom Transportation”,location:“Camden, NJ”,industry:“Rail & Transit Equipment”,workers:117,date:“Feb 2025”,assets:[“Rail Maintenance Equipment”,“Diagnostic Tools”,“Vehicle Components”,“Workshop Machinery”,“Specialized Tooling”],low:200000,high:500000,priority:“high”,stage:“Prospecting”,contact:””,notes:“Specialized buyer pool — transit authorities and rail contractors.”},
+{id:6,company:“Pioneer Credit Recovery”,location:“Burlington, NJ”,industry:“Financial Services”,workers:180,date:“Mar 2026”,assets:[“Servers & Networking”,“Workstations (180)”,“Call Center Equipment”,“Office Furniture”,“Filing Systems”],low:50000,high:150000,priority:“medium”,stage:“Prospecting”,contact:””,notes:“Filed Dec 2025 — window open NOW. 180 workstations + server infrastructure.”},
+{id:7,company:“Jefferson Health”,location:“Cherry Hill, NJ”,industry:“Healthcare”,workers:108,date:“Jan 2026”,assets:[“Medical Equipment”,“Diagnostic Tools”,“IT Infrastructure”,“Exam Furniture”,“Lab Equipment”],low:75000,high:200000,priority:“medium”,stage:“Prospecting”,contact:””,notes:“Package with HIPAA data destruction as bundled service — differentiates and adds margin.”},
+{id:8,company:“Ready Pac Produce”,location:“Florence, NJ”,industry:“Food Processing”,workers:75,date:“Apr 2025”,assets:[“Cold Storage Units”,“Packaging Equipment”,“Processing Lines”,“Refrigerated Fleet”,“Warehouse Racking”],low:100000,high:300000,priority:“medium”,stage:“Prospecting”,contact:””,notes:“Cold chain equipment in high domestic demand. Refrigerated fleet sells in days.”},
+{id:9,company:“Iron Hill Brewery”,location:“Maple Shade, NJ”,industry:“Food & Beverage”,workers:108,date:“Sep-Oct 2025”,assets:[“Fermentation Tanks”,“Kegging Lines”,“Refrigeration Systems”,“Draft Systems”,“Restaurant Equipment”],low:80000,high:220000,priority:“medium”,stage:“Prospecting”,contact:””,notes:“Active craft brewery secondary market. Fermentation tanks sell in days.”},
+{id:10,company:“TTEC Government Solutions”,location:“Egg Harbor, NJ”,industry:“Government / Call Center”,workers:120,date:“Jan 2026”,assets:[“Workstations (120)”,“Servers”,“Networking Equipment”,“Headsets & AV”,“Office Furniture”],low:40000,high:120000,priority:“medium”,stage:“Prospecting”,contact:””,notes:“120-seat call center. ITAD brokers will buy the lot outright within a week.”},
 ];
 
 const BUYERS = [
-  {name:"IronPlanet",category:"Industrial Equipment",url:"ironplanet.com",min:"$50K+",note:"Global marketplace for heavy equipment. Commission auction model."},
-  {name:"Ritchie Bros. Auctioneers",category:"Industrial Equipment",url:"rbauction.com",min:"$100K+",note:"World's largest industrial auctioneer. International reach."},
-  {name:"Machinio",category:"Manufacturing Machinery",url:"machinio.com",min:"$10K+",note:"Search engine for used machinery. Huge international buyer base."},
-  {name:"CommercialTruckTrader",category:"Commercial Vehicles",url:"commercialtrucktrader.com",min:"$20K+",note:"Largest US marketplace for commercial trucks and trailers."},
-  {name:"TruckPaper",category:"Commercial Vehicles",url:"truckpaper.com",min:"$15K+",note:"Heavy truck classifieds. Strong broker network."},
-  {name:"Aucto",category:"Food Processing Equipment",url:"aucto.com",min:"$25K+",note:"Industrial and food equipment auctions. Buyers in 40+ countries."},
-  {name:"ProBrewery Equipment",category:"Brewery Equipment",url:"probrewery.com",min:"$5K+",note:"Used brewing equipment marketplace. Buyers check daily."},
-  {name:"Radwell International",category:"Industrial Electronics",url:"radwell.com",min:"$10K+",note:"PLCs, drives, electronics. Will buy outright."},
-  {name:"Surplus City Liquidators",category:"Office / IT Equipment",url:"surpluscity.com",min:"$5K+",note:"Office furniture, electronics, IT liquidation."},
-  {name:"BioMedical Equipment Trader",category:"Medical Equipment",url:"biomed.com",min:"$10K+",note:"Hospital and clinic equipment remarketing network."},
-  {name:"Santek Industries",category:"Rail / Specialty Equipment",url:"santekindustries.com",min:"$50K+",note:"Specialized industrial and rail equipment buyers."},
-  {name:"Excess Logic",category:"Office / IT Equipment",url:"excesslogic.com",min:"$10K+",note:"ITAD and IT asset liquidation. Takes entire lots."},
+{name:“IronPlanet”,category:“Industrial Equipment”,url:“ironplanet.com”,min:”$50K+”,note:“Global marketplace for heavy equipment. Commission auction model.”},
+{name:“Ritchie Bros. Auctioneers”,category:“Industrial Equipment”,url:“rbauction.com”,min:”$100K+”,note:“World’s largest industrial auctioneer. International reach.”},
+{name:“Machinio”,category:“Manufacturing Machinery”,url:“machinio.com”,min:”$10K+”,note:“Search engine for used machinery. Huge international buyer base.”},
+{name:“CommercialTruckTrader”,category:“Commercial Vehicles”,url:“commercialtrucktrader.com”,min:”$20K+”,note:“Largest US marketplace for commercial trucks and trailers.”},
+{name:“TruckPaper”,category:“Commercial Vehicles”,url:“truckpaper.com”,min:”$15K+”,note:“Heavy truck classifieds. Strong broker network.”},
+{name:“Aucto”,category:“Food Processing Equipment”,url:“aucto.com”,min:”$25K+”,note:“Industrial and food equipment auctions. Buyers in 40+ countries.”},
+{name:“ProBrewery Equipment”,category:“Brewery Equipment”,url:“probrewery.com”,min:”$5K+”,note:“Used brewing equipment marketplace. Buyers check daily.”},
+{name:“Radwell International”,category:“Industrial Electronics”,url:“radwell.com”,min:”$10K+”,note:“PLCs, drives, electronics. Will buy outright.”},
+{name:“Surplus City Liquidators”,category:“Office / IT Equipment”,url:“surpluscity.com”,min:”$5K+”,note:“Office furniture, electronics, IT liquidation.”},
+{name:“BioMedical Equipment Trader”,category:“Medical Equipment”,url:“biomed.com”,min:”$10K+”,note:“Hospital and clinic equipment remarketing network.”},
+{name:“Santek Industries”,category:“Rail / Specialty Equipment”,url:“santekindustries.com”,min:”$50K+”,note:“Specialized industrial and rail equipment buyers.”},
+{name:“Excess Logic”,category:“Office / IT Equipment”,url:“excesslogic.com”,min:”$10K+”,note:“ITAD and IT asset liquidation. Takes entire lots.”},
 ];
 
 /* ════════════════════════════════════════════
-   STATE
+STATE
 ════════════════════════════════════════════ */
 let state = {
-  tab: "dashboard",
-  targets: [],
-  detailId: null,
-  filterPriority: "all",
-  outreachTargetId: "",
-  outreachEmails: [],
-  outreachLoading: false,
-  outreachError: "",
-  valItems: [{cat:"",desc:"",qty:1,year:"",cond:"Good"}],
-  valTargetId: "",
-  valResult: null,
-  valLoading: false,
-  valError: "",
-  docType: "capability",
-  docTargetId: "",
-  docName: "Russ Brick",
-  docCompany: "Reclaim Solutions",
-  docText: "",
-  docLoading: false,
-  docError: "",
+tab: “dashboard”,
+targets: [],
+detailId: null,
+filterPriority: “all”,
+outreachTargetId: “”,
+outreachEmails: [],
+outreachLoading: false,
+outreachError: “”,
+valItems: [{cat:””,desc:””,qty:1,year:””,cond:“Good”}],
+valTargetId: “”,
+valResult: null,
+valLoading: false,
+valError: “”,
+docType: “capability”,
+docTargetId: “”,
+docName: “Russ Brick”,
+docCompany: “Reclaim Solutions”,
+docText: “”,
+docLoading: false,
+docError: “”,
 };
 
 function loadTargets() {
-  try {
-    const s = localStorage.getItem("rs-targets-v4");
-    state.targets = s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_TARGETS));
-  } catch(e) {
-    state.targets = JSON.parse(JSON.stringify(DEFAULT_TARGETS));
-  }
+try {
+const s = localStorage.getItem(“rs-targets-v4”);
+state.targets = s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_TARGETS));
+} catch(e) {
+state.targets = JSON.parse(JSON.stringify(DEFAULT_TARGETS));
+}
 }
 
 function saveTargets() {
-  try { localStorage.setItem("rs-targets-v4", JSON.stringify(state.targets)); } catch(e) {}
+try { localStorage.setItem(“rs-targets-v4”, JSON.stringify(state.targets)); } catch(e) {}
 }
 
 /* ════════════════════════════════════════════
-   HELPERS
+HELPERS
 ════════════════════════════════════════════ */
 const fmt = n => n >= 1000000 ? `$${(n/1000000).toFixed(1)}M` : n >= 1000 ? `$${Math.round(n/1000)}K` : `$${n}`;
 const fee = n => fmt(Math.round(n * 0.12));
-const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const esc = s => String(s).replace(/&/g,”&”).replace(/</g,”<”).replace(/>/g,”>”).replace(/”/g,”"”);
 
 function badge(p) {
-  const m = PRIORITY_META[p] || PRIORITY_META.low;
-  return `<span class="badge ${p}">${m.label}</span>`;
+const m = PRIORITY_META[p] || PRIORITY_META.low;
+return `<span class="badge ${p}">${m.label}</span>`;
 }
 
 function btn(label, cls, onclick, disabled) {
-  return `<button class="btn ${cls||""}" onclick="${onclick}" ${disabled?"disabled":""}>${label}</button>`;
+return `<button class="btn ${cls||""}" onclick="${onclick}" ${disabled?"disabled":""}>${label}</button>`;
 }
 
 async function callClaude(system, user) {
-  const res = await fetch("/.netlify/functions/claude-proxy", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      system: system,
-      max_tokens: 2000,
-      messages: [{role:"user", content:user}]
-    })
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Proxy error");
-  return data.content[0].text;
+const res = await fetch(”/.netlify/functions/claude-proxy”, {
+method: “POST”,
+headers: { “Content-Type”: “application/json” },
+body: JSON.stringify({
+system: system,
+max_tokens: 2000,
+messages: [{role:“user”, content:user}]
+})
+});
+const data = await res.json();
+if (!res.ok) throw new Error(data.error || “Proxy error”);
+return data.content[0].text;
 }
 
 /* ════════════════════════════════════════════
-   GATE
+GATE
 ════════════════════════════════════════════ */
 async function checkPw() {
-  const val = document.getElementById("pw-input").value;
-  if (!val) return;
-  const btn = document.querySelector("#gate-pw .gate-btn");
-  const errEl = document.getElementById("pw-err");
-  btn.textContent = "CHECKING...";
-  btn.disabled = true;
-  errEl.style.display = "none";
+const val = document.getElementById(“pw-input”).value;
+if (!val) return;
+const btn = document.querySelector(”#gate-pw .gate-btn”);
+const errEl = document.getElementById(“pw-err”);
+btn.textContent = “CHECKING…”;
+btn.disabled = true;
+errEl.style.display = “none”;
 
-  try {
-    const res = await fetch("/.netlify/functions/check-pw", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: val })
-    });
-    const data = await res.json();
+try {
+const res = await fetch(”/.netlify/functions/check-pw”, {
+method: “POST”,
+headers: { “Content-Type”: “application/json” },
+body: JSON.stringify({ password: val })
+});
+const data = await res.json();
 
-    if (data.ok) {
-      sessionStorage.setItem("rs-auth", "1");
-      document.getElementById("gate-pw").style.display = "none";
-      launchApp();
-    } else {
-      errEl.textContent = data.error || "Incorrect password";
-      errEl.style.display = "block";
-      document.getElementById("pw-input").value = "";
-      btn.textContent = "ENTER THE PLATFORM →";
-      btn.disabled = false;
-    }
-  } catch (e) {
-    errEl.textContent = "Network error — are you on the deployed site?";
-    errEl.style.display = "block";
-    btn.textContent = "ENTER THE PLATFORM →";
-    btn.disabled = false;
-  }
+```
+if (data.ok) {
+  sessionStorage.setItem("rs-auth", "1");
+  document.getElementById("gate-pw").style.display = "none";
+  launchApp();
+} else {
+  errEl.textContent = data.error || "Incorrect password";
+  errEl.style.display = "block";
+  document.getElementById("pw-input").value = "";
+  btn.textContent = "ENTER THE PLATFORM →";
+  btn.disabled = false;
+}
+```
+
+} catch (e) {
+errEl.textContent = “Network error — are you on the deployed site?”;
+errEl.style.display = “block”;
+btn.textContent = “ENTER THE PLATFORM →”;
+btn.disabled = false;
+}
 }
 
-document.getElementById("pw-input").addEventListener("keydown", e => { if (e.key === "Enter") checkPw(); });
-
+document.getElementById(“pw-input”).addEventListener(“keydown”, e => { if (e.key === “Enter”) checkPw(); });
 
 function launchApp() {
-  try {
-    document.getElementById("gate").style.display = "none";
-    document.getElementById("app").style.display = "block";
-    loadTargets();
-    initNav();
-    renderAll();
-  } catch(e) {
-    document.body.innerHTML = '<div style="padding:40px;font-family:monospace;color:#EF4444;background:#0F1410;min-height:100vh"><h2>Launch Error</h2><pre style="margin-top:20px;white-space:pre-wrap">'+e.message+'\n\n'+e.stack+'</pre></div>';
-
+try {
+document.getElementById(“gate”).style.display = “none”;
+document.getElementById(“app”).style.display = “block”;
+loadTargets();
+initNav();
+renderAll();
+} catch(e) {
+document.body.innerHTML = ‘<div style="padding:40px;font-family:monospace;color:#EF4444;background:#0F1410;min-height:100vh"><h2>Launch Error</h2><pre style="margin-top:20px;white-space:pre-wrap">’+e.message+’\n\n’+e.stack+’</pre></div>’;
 }
 }
 
