@@ -166,7 +166,7 @@ textarea{width:100%;background:var(–s2);border:1px solid var(–bd);color:var(
     <div class="gate-title">SECURE ACCESS</div>
     <div class="gate-sub">Team members only</div>
     <input class="gate-in" type="password" id="pw-input" placeholder="Enter password" autocomplete="current-password" />
-    <button class="gate-btn" onclick="checkPw()">ENTER THE PLATFORM →</button>
+    <button class="gate-btn" onclick="(async()=>{const v=document.getElementById('pw-input').value;if(!v)return;this.textContent='CHECKING...';this.disabled=true;try{const r=await fetch('/.netlify/functions/check-pw',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:v})});const d=await r.json();if(d.ok){sessionStorage.setItem('rs-auth','1');document.getElementById('gate-pw').style.display='none';launchApp();}else{document.getElementById('pw-err').style.display='block';document.getElementById('pw-input').value='';this.textContent='ENTER THE PLATFORM →';this.disabled=false;}}catch(e){document.getElementById('pw-err').textContent='Error: '+e.message;document.getElementById('pw-err').style.display='block';this.textContent='ENTER THE PLATFORM →';this.disabled=false;}})()">ENTER THE PLATFORM →</button>
     <div id="pw-err" class="gate-err" style="display:none">Incorrect password</div>
     <div class="gate-hint">Contact Russ for access</div>
   </div>
