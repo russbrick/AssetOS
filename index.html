@@ -324,8 +324,6 @@ async function callClaude(system, user) {
 /* ════════════════════════════════════════════
    GATE
 ════════════════════════════════════════════ */
-document.getElementById("pw-input").addEventListener("keydown", e => { if (e.key==="Enter") checkPw(); });
-
 
 async function checkPw() {
   const val = document.getElementById("pw-input").value;
@@ -359,6 +357,7 @@ async function checkPw() {
   }
 }
 
+  document.getElementById("pw-input").addEventListener("keydown", e => { if (e.key==="Enter") checkPw(); });
 
 function launchApp() {
   document.getElementById("gate").style.display = "none";
