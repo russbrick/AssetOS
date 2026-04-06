@@ -168,17 +168,7 @@ textarea{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--
     <div class="gate-hint">Contact Russ for access</div>
   </div>
 
-  <div class="gate-box" id="gate-key" style="display:none;max-width:480px">
-    <div style="font-size:9px;color:var(--acl);letter-spacing:3px;margin-bottom:12px">// ONE-TIME SETUP</div>
-    <div style="font-size:18px;font-weight:700;margin-bottom:8px">Anthropic API Key</div>
-    <div style="font-size:11px;color:var(--td);margin-bottom:28px;line-height:1.7">Required for AI features — email generator, asset valuation, document creation.<br>Stored locally on this device only.</div>
-    <input class="gate-in" type="password" id="key-input" placeholder="sk-ant-api03-..." />
-    <div id="key-err" class="gate-err" style="display:none">Must start with sk-ant-</div>
-    <button class="gate-btn" onclick="saveKey()">SAVE KEY AND CONTINUE →</button>
-    <button class="skip-btn" onclick="skipKey()">Skip — disable AI features for now</button>
-    <div class="gate-hint">console.anthropic.com</div>
-  </div>
-</div>
+  <div class="gate-box" id="gate-key" style="display:none"></div>
 
 <!-- ══════════ APP ══════════ -->
 <div id="app">
@@ -191,7 +181,7 @@ textarea{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--
     <div id="nav-tabs"></div>
     <div id="nav-status">
       <span id="pipeline-val" style="color:var(--acc);display:none"></span>
-      <span id="no-key-badge" style="display:none;font-size:8px;color:var(--yel);border:1px solid rgba(245,158,11,.4);padding:2px 6px;border-radius:2px">NO API KEY</span>
+
       <span class="live-dot"></span>
       <span style="color:var(--grn);letter-spacing:1.5px">LIVE</span>
     </div>
@@ -310,25 +300,17 @@ function btn(label, cls, onclick, disabled) {
 }
 
 async function callClaude(system, user) {
-  const key = localStorage.getItem("rs-apikey");
-  if (!key) throw new Error("No API key");
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
+  const res = await fetch("/.netlify/functions/claude-proxy", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": key,
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-direct-browser-access": "true"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 2000,
       system: system,
+      max_tokens: 2000,
       messages: [{role:"user", content:user}]
     })
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error?.message || "API error");
+  if (!res.ok) throw new Error(data.error || "Proxy error");
   return data.content[0].text;
 }
 
@@ -336,7 +318,7 @@ async function callClaude(system, user) {
    GATE
 ════════════════════════════════════════════ */
 document.getElementById("pw-input").addEventListener("keydown", e => { if (e.key==="Enter") checkPw(); });
-document.getElementById("key-input").addEventListener("keydown", e => { if (e.key==="Enter") saveKey(); });
+
 
 async function checkPw() {
   const val = document.getElementById("pw-input").value;
@@ -355,13 +337,7 @@ async function checkPw() {
     if (data.ok) {
       sessionStorage.setItem("rs-auth","1");
       document.getElementById("gate-pw").style.display = "none";
-      const hasKey  = localStorage.getItem("rs-apikey");
-      const skipped = sessionStorage.getItem("rs-key-skipped");
-      if (!hasKey && !skipped) {
-        document.getElementById("gate-key").style.display = "block";
-      } else {
-        launchApp();
-      }
+      launchApp();
     } else {
       document.getElementById("pw-err").style.display = "block";
       document.getElementById("pw-input").value = "";
@@ -376,20 +352,6 @@ async function checkPw() {
   }
 }
 
-function saveKey() {
-  const val = document.getElementById("key-input").value.trim();
-  if (!val.startsWith("sk-ant-")) {
-    document.getElementById("key-err").style.display = "block";
-    return;
-  }
-  localStorage.setItem("rs-apikey", val);
-  launchApp();
-}
-
-function skipKey() {
-  sessionStorage.setItem("rs-key-skipped","1");
-  launchApp();
-}
 
 function launchApp() {
   document.getElementById("gate").style.display = "none";
@@ -437,7 +399,7 @@ function updateNavStatus() {
   const pv = document.getElementById("pipeline-val");
   pv.style.display = pipeline>0 ? "" : "none";
   pv.textContent = fmt(pipeline)+" pipeline";
-  document.getElementById("no-key-badge").style.display = localStorage.getItem("rs-apikey") ? "none" : "";
+
 }
 
 /* ════════════════════════════════════════════
@@ -659,8 +621,7 @@ function updateTarget(id, key, val) {
    OUTREACH
 ════════════════════════════════════════════ */
 function renderOutreach() {
-  const hasKey = !!localStorage.getItem("rs-apikey");
-  const targetOpts = state.targets.map(t=>`<option value="${t.id}" ${t.id==state.outreachTargetId?"selected":""}>${esc(t.company)} — ${esc(t.location)}</option>`).join("");
+    const targetOpts = state.targets.map(t=>`<option value="${t.id}" ${t.id==state.outreachTargetId?"selected":""}>${esc(t.company)} — ${esc(t.location)}</option>`).join("");
   const selTarget = state.targets.find(t=>t.id==state.outreachTargetId);
 
   let recoveryBadge = "";
@@ -687,7 +648,7 @@ function renderOutreach() {
     <div class="lbl acc">// AI ENGINE</div>
     <div class="section-title">Cold Outreach Generator</div>
     <div class="section-sub">5-email sequences personalized per target · AI-generated · copy and send</div>
-    ${!hasKey?`<div class="warn-bar">⚠ No API key set — go to the Settings tab to add your Anthropic API key.</div>`:""}
+    
     <div class="card" style="margin-bottom:16px">
       <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:flex-end">
         <div>
@@ -698,7 +659,7 @@ function renderOutreach() {
           </select>
         </div>
         ${recoveryBadge}
-        <button class="btn" onclick="generateEmails()" ${!state.outreachTargetId||state.outreachLoading||!hasKey?"disabled":""}>
+        <button class="btn" onclick="generateEmails()" ${!state.outreachTargetId||state.outreachLoading?"disabled":""}>
           ${state.outreachLoading?`<span class="spinner"></span> GENERATING...`:"⚡ GENERATE"}
         </button>
       </div>
@@ -743,8 +704,7 @@ const ASSET_CATS = ["Manufacturing Equipment","Commercial Vehicles","Food Proces
 const CONDITIONS  = ["Excellent","Good","Fair","Poor"];
 
 function renderValuation() {
-  const hasKey = !!localStorage.getItem("rs-apikey");
-  const targetOpts = state.targets.map(t=>`<option value="${t.id}" ${t.id==state.valTargetId?"selected":""}>${esc(t.company)} — ${esc(t.location)}</option>`).join("");
+    const targetOpts = state.targets.map(t=>`<option value="${t.id}" ${t.id==state.valTargetId?"selected":""}>${esc(t.company)} — ${esc(t.location)}</option>`).join("");
 
   const itemsHtml = state.valItems.map((a,i)=>{
     const catOpts    = ASSET_CATS.map(c=>`<option value="${c}" ${c===a.cat?"selected":""}>${c}</option>`).join("");
@@ -807,7 +767,7 @@ function renderValuation() {
     <div class="lbl acc">// AI ENGINE</div>
     <div class="section-title">Asset Valuation Engine</div>
     <div class="section-sub">Input any asset list · AI estimates per-asset recovery value, best channels, and timeline</div>
-    ${!hasKey?`<div class="warn-bar">⚠ No API key — go to Settings tab.</div>`:""}
+    
     <div style="display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start">
       <div class="flex-col gap12">
         <div class="card">
@@ -824,7 +784,7 @@ function renderValuation() {
           </div>
           ${itemsHtml}
         </div>
-        <button class="btn full" onclick="generateValuation()" ${state.valLoading||!hasKey||state.valItems.every(a=>!a.desc&&!a.cat)?"disabled":""}>
+        <button class="btn full" onclick="generateValuation()" ${state.valLoading||state.valItems.every(a=>!a.desc&&!a.cat)?"disabled":""}>
           ${state.valLoading?`<span class="spinner"></span> ANALYZING...`:"⚡ GENERATE ESTIMATE"}
         </button>
         ${state.valError?`<div style="color:var(--red);font-size:11px">${esc(state.valError)}</div>`:""}
@@ -955,8 +915,7 @@ const DOC_TYPES = [
 ];
 
 function renderDocs() {
-  const hasKey = !!localStorage.getItem("rs-apikey");
-  const needsTarget = ["agreement","assessment","intro"].includes(state.docType);
+    const needsTarget = ["agreement","assessment","intro"].includes(state.docType);
   const targetOpts = state.targets.map(t=>`<option value="${t.id}" ${t.id==state.docTargetId?"selected":""}>${esc(t.company)}</option>`).join("");
 
   const docTypeBtns = DOC_TYPES.map(d=>`
@@ -981,7 +940,7 @@ function renderDocs() {
     <div class="lbl acc">// AI ENGINE</div>
     <div class="section-title">Document Generator</div>
     <div class="section-sub">Professional documents on demand · capability statements · agreements · assessments</div>
-    ${!hasKey?`<div class="warn-bar">⚠ No API key — go to Settings tab.</div>`:""}
+    
     <div style="display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:start">
       <div class="flex-col gap12">
         <div class="card">
@@ -1001,7 +960,7 @@ function renderDocs() {
               </select>`:""}
           </div>
         </div>
-        <button class="btn full" onclick="generateDoc()" ${state.docLoading||!hasKey?"disabled":""}>
+        <button class="btn full" onclick="generateDoc()" ${state.docLoading?"disabled":""}>
           ${state.docLoading?`<span class="spinner"></span> GENERATING...`:"⚡ GENERATE DOCUMENT"}
         </button>
         ${state.docError?`<div style="color:var(--red);font-size:11px">${esc(state.docError)}</div>`:""}
@@ -1049,8 +1008,7 @@ function copyDocText() {
    SETTINGS
 ════════════════════════════════════════════ */
 function renderSettings() {
-  const hasKey = !!localStorage.getItem("rs-apikey");
-  document.getElementById("tab-settings").innerHTML = `
+    document.getElementById("tab-settings").innerHTML = `
     <div class="lbl acc">// SETTINGS</div>
     <div class="section-title">Platform Settings</div>
     <div class="flex-col gap12" style="max-width:560px;margin-top:20px">
@@ -1060,15 +1018,7 @@ function renderSettings() {
           Required for AI features. Get your key at console.anthropic.com.<br>
           Stored locally on this device only — never sent anywhere except Anthropic's API.
         </div>
-        <input class="inp" type="password" id="settings-key" placeholder="sk-ant-api03-..."
-          value="${esc(localStorage.getItem('rs-apikey')||'')}"
-          style="margin-bottom:10px;letter-spacing:${hasKey?'2px':'1px'}" />
-        <div style="display:flex;gap:8px">
-          <button class="btn" onclick="settingsSaveKey()">SAVE KEY</button>
-          ${hasKey?`<button class="btn red" onclick="settingsClearKey()">✕ CLEAR</button>`:""}
-        </div>
-        ${hasKey?`<div style="margin-top:10px;font-size:10px;color:var(--grn)">✓ API key is set — AI features enabled</div>`:""}
-        <div id="settings-key-msg" style="margin-top:8px;font-size:10px"></div>
+        <div style="font-size:10px;color:var(--grn)">✓ Secure — key lives on server only</div>
       </div>
       <div class="card">
         <div class="lbl acc" style="margin-bottom:12px">// ACCESS PASSWORD</div>
@@ -1087,17 +1037,6 @@ function renderSettings() {
     </div>`;
 }
 
-function settingsSaveKey() {
-  const val = document.getElementById("settings-key").value.trim();
-  localStorage.setItem("rs-apikey", val);
-  const msg = document.getElementById("settings-key-msg");
-  msg.style.color = "var(--grn)"; msg.textContent = "✓ Saved";
-  setTimeout(()=>{msg.textContent="";renderAll();}, 1500);
-}
-function settingsClearKey() {
-  localStorage.removeItem("rs-apikey");
-  renderAll();
-}
 function clearAllData() {
   if (window.confirm("Clear all data? Targets reset to defaults. Cannot be undone.")) {
     localStorage.removeItem("rs-targets-v4");
