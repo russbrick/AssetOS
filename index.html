@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -25,40 +26,40 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
 /* ── LAYOUT ── */
 #app{display:none}
 #gate{display:flex;min-height:100vh;align-items:center;justify-content:center;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(45,122,80,.08),transparent 70%)}
-.gate-box{background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:48px;width:100%;max-width:420px;text-align:center;animation:fadeUp .3s ease both}
+.gate-box{background:var(–s1);border:1px solid var(–bd);border-radius:6px;padding:48px;width:100%;max-width:420px;text-align:center;animation:fadeUp .3s ease both}
 .gate-logo{margin-bottom:32px}
-.gate-logo .r{font-family:'Playfair Display',serif;font-style:italic;font-weight:900;font-size:28px;color:var(--acc);letter-spacing:-1.5px}
-.gate-logo .eclaim{font-family:'Playfair Display',serif;font-weight:700;font-size:28px;color:var(--tx);letter-spacing:-.5px}
-.gate-logo .div{display:inline-block;width:1.5px;height:22px;background:var(--acc);opacity:.3;margin:0 10px;vertical-align:middle}
+.gate-logo .r{font-family:‘Playfair Display’,serif;font-style:italic;font-weight:900;font-size:28px;color:var(–acc);letter-spacing:-1.5px}
+.gate-logo .eclaim{font-family:‘Playfair Display’,serif;font-weight:700;font-size:28px;color:var(–tx);letter-spacing:-.5px}
+.gate-logo .div{display:inline-block;width:1.5px;height:22px;background:var(–acc);opacity:.3;margin:0 10px;vertical-align:middle}
 .gate-logo .sub{display:inline-flex;flex-direction:column;vertical-align:middle}
-.gate-logo .sub span:first-child{font-size:8px;font-weight:300;letter-spacing:3.5px;color:var(--acl);text-transform:uppercase}
-.gate-logo .sub span:last-child{font-size:7px;letter-spacing:2px;color:var(--td);margin-top:2px}
+.gate-logo .sub span:first-child{font-size:8px;font-weight:300;letter-spacing:3.5px;color:var(–acl);text-transform:uppercase}
+.gate-logo .sub span:last-child{font-size:7px;letter-spacing:2px;color:var(–td);margin-top:2px}
 .gate-title{font-size:13px;color:#A8B8A0;letter-spacing:3px;margin-bottom:8px}
 .gate-sub{font-size:11px;color:#5A6A58;letter-spacing:1px;margin-bottom:32px}
 .gate-hint{font-size:9px;color:#3A4A38;margin-top:20px;letter-spacing:1px}
-.gate-err{font-size:10px;color:var(--red);margin-top:10px;letter-spacing:1px}
-input.gate-in{width:100%;background:var(--bg);border:1px solid var(--bd);color:var(--tx);padding:14px;font-size:13px;font-family:var(--ff);border-radius:3px;outline:none;margin-bottom:12px;letter-spacing:1px;text-align:center;transition:border-color .2s;display:block}
-input.gate-in:focus{border-color:var(--acc)}
+.gate-err{font-size:10px;color:var(–red);margin-top:10px;letter-spacing:1px}
+input.gate-in{width:100%;background:var(–bg);border:1px solid var(–bd);color:var(–tx);padding:14px;font-size:13px;font-family:var(–ff);border-radius:3px;outline:none;margin-bottom:12px;letter-spacing:1px;text-align:center;transition:border-color .2s;display:block}
+input.gate-in:focus{border-color:var(–acc)}
 input.gate-in::placeholder{color:#3A4A38}
-button.gate-btn{width:100%;background:#1E5C3A;color:#fff;border:none;font-family:var(--ff);font-size:11px;font-weight:700;letter-spacing:2px;padding:14px;border-radius:3px;cursor:pointer;transition:background .15s}
-button.gate-btn:hover{background:var(--acc)}
-button.skip-btn{background:none;border:none;color:var(--td);font-size:10px;cursor:pointer;letter-spacing:1px;font-family:var(--ff);margin-top:12px;padding:8px;width:100%}
+button.gate-btn{width:100%;background:#1E5C3A;color:#fff;border:none;font-family:var(–ff);font-size:11px;font-weight:700;letter-spacing:2px;padding:14px;border-radius:3px;cursor:pointer;transition:background .15s}
+button.gate-btn:hover{background:var(–acc)}
+button.skip-btn{background:none;border:none;color:var(–td);font-size:10px;cursor:pointer;letter-spacing:1px;font-family:var(–ff);margin-top:12px;padding:8px;width:100%}
 
 /* ── NAV ── */
-#nav{background:var(--s1);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 20px;height:52px;position:sticky;top:0;z-index:100}
+#nav{background:var(–s1);border-bottom:1px solid var(–bd);display:flex;align-items:center;padding:0 20px;height:52px;position:sticky;top:0;z-index:100}
 .nav-logo{display:flex;align-items:baseline;margin-right:28px;flex-shrink:0}
-.nav-logo .r{font-family:'Playfair Display',serif;font-style:italic;font-weight:900;font-size:20px;color:var(--acc);letter-spacing:-1px}
-.nav-logo .eclaim{font-family:'Playfair Display',serif;font-weight:700;font-size:20px;color:var(--tx);letter-spacing:-.5px}
-.nav-logo .div{width:1.5px;height:18px;background:var(--acc);opacity:.3;margin:0 9px}
+.nav-logo .r{font-family:‘Playfair Display’,serif;font-style:italic;font-weight:900;font-size:20px;color:var(–acc);letter-spacing:-1px}
+.nav-logo .eclaim{font-family:‘Playfair Display’,serif;font-weight:700;font-size:20px;color:var(–tx);letter-spacing:-.5px}
+.nav-logo .div{width:1.5px;height:18px;background:var(–acc);opacity:.3;margin:0 9px}
 .nav-logo .sub{display:flex;flex-direction:column}
-.nav-logo .sub span:first-child{font-size:7px;font-weight:300;letter-spacing:3px;color:var(--acl);text-transform:uppercase}
-.nav-logo .sub span:last-child{font-size:6px;letter-spacing:1.5px;color:var(--td);margin-top:2px}
+.nav-logo .sub span:first-child{font-size:7px;font-weight:300;letter-spacing:3px;color:var(–acl);text-transform:uppercase}
+.nav-logo .sub span:last-child{font-size:6px;letter-spacing:1.5px;color:var(–td);margin-top:2px}
 #nav-tabs{display:flex;flex:1;overflow-x:auto}
-.nav-tab{background:none;border:none;cursor:pointer;padding:0 14px;height:52px;display:flex;align-items:center;font-size:9px;font-family:var(--ff);font-weight:700;letter-spacing:1.5px;color:var(--td);border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;transition:all .15s}
-.nav-tab.active{color:var(--acc);border-bottom-color:var(--acc)}
-.nav-tab:hover{color:var(--tm)}
+.nav-tab{background:none;border:none;cursor:pointer;padding:0 14px;height:52px;display:flex;align-items:center;font-size:9px;font-family:var(–ff);font-weight:700;letter-spacing:1.5px;color:var(–td);border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.nav-tab.active{color:var(–acc);border-bottom-color:var(–acc)}
+.nav-tab:hover{color:var(–tm)}
 #nav-status{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:16px;font-size:9px}
-.live-dot{width:6px;height:6px;background:var(--grn);border-radius:50%;animation:pulse 2s infinite}
+.live-dot{width:6px;height:6px;background:var(–grn);border-radius:50%;animation:pulse 2s infinite}
 
 /* ── CONTENT ── */
 #content{padding:28px 24px;max-width:1440px;margin:0 auto;animation:fadeUp .3s ease both}
@@ -66,24 +67,24 @@ button.skip-btn{background:none;border:none;color:var(--td);font-size:10px;curso
 .tab-pane.active{display:block}
 
 /* ── CARDS & PRIMITIVES ── */
-.card{background:var(--s1);border:1px solid var(--bd);border-radius:4px;padding:16px}
-.lbl{font-size:9px;color:var(--td);letter-spacing:2px;font-weight:700;margin-bottom:8px}
-.lbl.acc{color:var(--acc)}
+.card{background:var(–s1);border:1px solid var(–bd);border-radius:4px;padding:16px}
+.lbl{font-size:9px;color:var(–td);letter-spacing:2px;font-weight:700;margin-bottom:8px}
+.lbl.acc{color:var(–acc)}
 .section-title{font-size:22px;font-weight:700;margin-bottom:4px}
-.section-sub{font-size:11px;color:var(--td);margin-bottom:20px;margin-top:3px}
+.section-sub{font-size:11px;color:var(–td);margin-bottom:20px;margin-top:3px}
 
-.btn{display:inline-flex;align-items:center;gap:5px;font-family:var(--ff);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:9px 16px;border-radius:3px;cursor:pointer;border:1px solid var(--acc);background:var(--adim);color:var(--acc);transition:all .15s}
-.btn:disabled{background:var(--s3);border-color:var(--bd);color:var(--td);cursor:not-allowed}
+.btn{display:inline-flex;align-items:center;gap:5px;font-family:var(–ff);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:9px 16px;border-radius:3px;cursor:pointer;border:1px solid var(–acc);background:var(–adim);color:var(–acc);transition:all .15s}
+.btn:disabled{background:var(–s3);border-color:var(–bd);color:var(–td);cursor:not-allowed}
 .btn.sm{font-size:9px;padding:4px 10px}
 .btn.full{width:100%;justify-content:center}
-.btn.grn{border-color:var(--grn);background:rgba(76,175,118,0.1);color:var(--grn)}
-.btn.red{border-color:var(--red);background:rgba(239,68,68,0.1);color:var(--red)}
-.btn.muted{border-color:var(--td);background:transparent;color:var(--td)}
+.btn.grn{border-color:var(–grn);background:rgba(76,175,118,0.1);color:var(–grn)}
+.btn.red{border-color:var(–red);background:rgba(239,68,68,0.1);color:var(–red)}
+.btn.muted{border-color:var(–td);background:transparent;color:var(–td)}
 
-inp, .inp{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:7px 10px;font-size:11px;font-family:var(--ff);border-radius:3px;outline:none}
-select{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:7px 10px;font-size:11px;font-family:var(--ff);border-radius:3px;outline:none;cursor:pointer}
-select option{background:var(--s2)}
-textarea{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:8px 10px;font-size:11px;font-family:var(--ff);border-radius:3px;outline:none;resize:vertical;line-height:1.7}
+inp, .inp{width:100%;background:var(–s2);border:1px solid var(–bd);color:var(–tx);padding:7px 10px;font-size:11px;font-family:var(–ff);border-radius:3px;outline:none}
+select{width:100%;background:var(–s2);border:1px solid var(–bd);color:var(–tx);padding:7px 10px;font-size:11px;font-family:var(–ff);border-radius:3px;outline:none;cursor:pointer}
+select option{background:var(–s2)}
+textarea{width:100%;background:var(–s2);border:1px solid var(–bd);color:var(–tx);padding:8px 10px;font-size:11px;font-family:var(–ff);border-radius:3px;outline:none;resize:vertical;line-height:1.7}
 
 .badge{display:inline-block;font-size:8px;font-weight:700;letter-spacing:1.5px;padding:2px 7px;border-radius:2px}
 .badge.critical{color:#EF4444;background:#EF444418}
@@ -91,7 +92,7 @@ textarea{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--
 .badge.medium{color:#3B82F6;background:#3B82F618}
 .badge.low{color:#6B7280;background:#6B728018}
 
-.spinner{display:inline-block;width:10px;height:10px;border:2px solid rgba(45,122,80,.3);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
+.spinner{display:inline-block;width:10px;height:10px;border:2px solid rgba(45,122,80,.3);border-top-color:var(–acc);border-radius:50%;animation:spin .8s linear infinite}
 
 /* ── GRID HELPERS ── */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -105,54 +106,56 @@ textarea{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--
 
 /* ── STAT CARDS ── */
 .stat-val{font-size:28px;font-weight:700;margin-bottom:4px}
-.stat-sub{font-size:10px;color:var(--td)}
+.stat-sub{font-size:10px;color:var(–td)}
 
 /* ── TARGET LIST ── */
-.target-row{background:var(--s1);border:1px solid var(--bd);border-radius:4px;padding:14px 16px;cursor:pointer;display:grid;grid-template-columns:2fr 1fr 1fr 100px 130px;gap:12px;align-items:center;transition:border-color .15s}
-.target-row:hover{border-color:var(--acc)}
+.target-row{background:var(–s1);border:1px solid var(–bd);border-radius:4px;padding:14px 16px;cursor:pointer;display:grid;grid-template-columns:2fr 1fr 1fr 100px 130px;gap:12px;align-items:center;transition:border-color .15s}
+.target-row:hover{border-color:var(–acc)}
 
 /* ── PIPELINE ── */
 .stage-col{flex:1}
 .stage-hd{margin-bottom:10px;padding-bottom:8px}
-.deal-card{background:var(--s1);border:1px solid var(--bd);border-radius:4px;padding:10px;margin-bottom:8px}
+.deal-card{background:var(–s1);border:1px solid var(–bd);border-radius:4px;padding:10px;margin-bottom:8px}
 
 /* ── WARN ── */
 .warn-bar{background:#F59E0B18;border:1px solid rgba(245,158,11,.4);border-radius:3px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:#F59E0B}
 
 /* ── EMAIL OUTPUT ── */
-.day-tag{background:var(--adim);color:var(--acc);font-size:9px;font-weight:700;letter-spacing:1.5px;padding:3px 8px;border-radius:2px}
-.email-body{font-size:11px;color:var(--tm);line-height:1.9;white-space:pre-wrap;background:var(--s2);padding:12px 14px;border-radius:3px}
+.day-tag{background:var(–adim);color:var(–acc);font-size:9px;font-weight:700;letter-spacing:1.5px;padding:3px 8px;border-radius:2px}
+.email-body{font-size:11px;color:var(–tm);line-height:1.9;white-space:pre-wrap;background:var(–s2);padding:12px 14px;border-radius:3px}
 
 /* ── DOC OUTPUT ── */
-.doc-type-opt{padding:10px 12px;cursor:pointer;border-radius:3px;margin-bottom:4px;border:1px solid var(--bd);background:var(--s2);transition:all .1s}
-.doc-type-opt.sel{background:var(--adim);border-color:var(--acc)}
-.doc-type-opt .dt-label{font-size:11px;font-weight:700;color:var(--tx)}
-.doc-type-opt.sel .dt-label{color:var(--acc)}
-.doc-type-opt .dt-desc{font-size:10px;color:var(--td)}
-.doc-output{font-size:12px;color:var(--tm);line-height:2;white-space:pre-wrap;font-family:var(--ff)}
+.doc-type-opt{padding:10px 12px;cursor:pointer;border-radius:3px;margin-bottom:4px;border:1px solid var(–bd);background:var(–s2);transition:all .1s}
+.doc-type-opt.sel{background:var(–adim);border-color:var(–acc)}
+.doc-type-opt .dt-label{font-size:11px;font-weight:700;color:var(–tx)}
+.doc-type-opt.sel .dt-label{color:var(–acc)}
+.doc-type-opt .dt-desc{font-size:10px;color:var(–td)}
+.doc-output{font-size:12px;color:var(–tm);line-height:2;white-space:pre-wrap;font-family:var(–ff)}
 
 /* ── ASSET ITEM ── */
-.asset-item{background:var(--s2);padding:10px;border-radius:3px;border:1px solid var(--bd);margin-bottom:10px}
+.asset-item{background:var(–s2);padding:10px;border-radius:3px;border:1px solid var(–bd);margin-bottom:10px}
 
 /* ── PIPELINE BAR ── */
-.pipe-bar{height:3px;background:var(--s2);border-radius:2px;margin-top:4px}
+.pipe-bar{height:3px;background:var(–s2);border-radius:2px;margin-top:4px}
 .pipe-fill{height:3px;border-radius:2px;transition:width .4s}
 
 /* ── QUICK ACTION ── */
-.qa{background:var(--s2);border:1px solid var(--bd);border-radius:3px;padding:14px;cursor:pointer;transition:border-color .15s}
-.qa:hover{border-color:var(--acc)}
-.qa-label{font-size:9px;color:var(--acc);font-weight:700;letter-spacing:1.5px;margin-bottom:4px}
-.qa-sub{font-size:10px;color:var(--td)}
+.qa{background:var(–s2);border:1px solid var(–bd);border-radius:3px;padding:14px;cursor:pointer;transition:border-color .15s}
+.qa:hover{border-color:var(–acc)}
+.qa-label{font-size:9px;color:var(–acc);font-weight:700;letter-spacing:1.5px;margin-bottom:4px}
+.qa-sub{font-size:10px;color:var(–td)}
 
 /* ── BREAKDOWN TABLE ── */
-.bk-hd{display:grid;grid-template-columns:2fr 50px 1.2fr 1.2fr 80px 1fr;padding:7px 14px;border-bottom:1px solid var(--bd)}
-.bk-row{display:grid;grid-template-columns:2fr 50px 1.2fr 1.2fr 80px 1fr;padding:10px 14px;border-bottom:1px solid var(--bd);align-items:center}
-.bk-col-hd{font-size:8px;color:var(--td);letter-spacing:2px;font-weight:700}
+.bk-hd{display:grid;grid-template-columns:2fr 50px 1.2fr 1.2fr 80px 1fr;padding:7px 14px;border-bottom:1px solid var(–bd)}
+.bk-row{display:grid;grid-template-columns:2fr 50px 1.2fr 1.2fr 80px 1fr;padding:10px 14px;border-bottom:1px solid var(–bd);align-items:center}
+.bk-col-hd{font-size:8px;color:var(–td);letter-spacing:2px;font-weight:700}
 </style>
+
 </head>
 <body>
 
 <!-- ══════════ GATE ══════════ -->
+
 <div id="gate">
   <div class="gate-box" id="gate-pw">
     <div class="gate-logo">
@@ -171,6 +174,7 @@ textarea{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--
   <div class="gate-box" id="gate-key" style="display:none"></div>
 
 <!-- ══════════ APP ══════════ -->
+
 <div id="app">
   <div id="nav">
     <div class="nav-logo">
@@ -182,9 +186,12 @@ textarea{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--
     <div id="nav-status">
       <span id="pipeline-val" style="color:var(--acc);display:none"></span>
 
-      <span class="live-dot"></span>
-      <span style="color:var(--grn);letter-spacing:1.5px">LIVE</span>
-    </div>
+```
+  <span class="live-dot"></span>
+  <span style="color:var(--grn);letter-spacing:1.5px">LIVE</span>
+</div>
+```
+
   </div>
 
   <div id="content">
@@ -361,10 +368,7 @@ function launchApp() {
   renderAll();
 }
 
-// Auto-launch if already authed
-if (sessionStorage.getItem("rs-auth") === "1") {
-  launchApp();
-}
+
 
 /* ════════════════════════════════════════════
    NAV
@@ -607,78 +611,72 @@ function renderTargetDetail() {
         <div class="card">
           <div class="lbl" style="margin-bottom:6px">NOTES</div>
           <textarea rows="7" oninput="updateTarget(${t.id},'notes',this.value)">${esc(t.notes)}</textarea>
-        </div>
-      </div>
-    </div>`;
+
+```
+    </div>
+  </div>
+</div>`;
+```
+
 }
 
 function updateTarget(id, key, val) {
-  const t = state.targets.find(x=>x.id===id);
-  if (t) { t[key] = val; saveTargets(); updateNavStatus(); }
+const t = state.targets.find(x=>x.id===id);
+if (t) { t[key] = val; saveTargets(); updateNavStatus(); }
 }
 
 /* ════════════════════════════════════════════
-   OUTREACH
+OUTREACH
 ════════════════════════════════════════════ */
 function renderOutreach() {
-    const targetOpts = state.targets.map(t=>`<option value="${t.id}" ${t.id==state.outreachTargetId?"selected":""}>${esc(t.company)} — ${esc(t.location)}</option>`).join("");
-  const selTarget = state.targets.find(t=>t.id==state.outreachTargetId);
+const targetOpts = state.targets.map(t=>`<option value="${t.id}" ${t.id==state.outreachTargetId?"selected":""}>${esc(t.company)} — ${esc(t.location)}</option>`).join(””);
+const selTarget = state.targets.find(t=>t.id==state.outreachTargetId);
 
-  let recoveryBadge = "";
-  if (selTarget) {
-    recoveryBadge = `<div style="background:var(--s2);padding:8px 14px;border-radius:3px;flex-shrink:0">
-      <div class="lbl" style="margin-bottom:2px">EST. RECOVERY</div>
-      <div style="font-size:13px;color:var(--grn);font-weight:700">${fmt(selTarget.low)}-${fmt(selTarget.high)}</div>
-    </div>`;
-  }
+let recoveryBadge = “”;
+if (selTarget) {
+recoveryBadge = `<div style="background:var(--s2);padding:8px 14px;border-radius:3px;flex-shrink:0"> <div class="lbl" style="margin-bottom:2px">EST. RECOVERY</div> <div style="font-size:13px;color:var(--grn);font-weight:700">${fmt(selTarget.low)}-${fmt(selTarget.high)}</div> </div>`;
+}
 
-  const emailsHtml = state.outreachEmails.map((e,i)=>`
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div style="display:flex;gap:10px;align-items:center">
-          <span class="day-tag">DAY ${e.day}</span>
-          <div style="font-size:12px;font-weight:700">Subject: ${esc(e.subject)}</div>
-        </div>
-        <button class="btn sm muted" onclick="copyText('email-body-${i}','copy-btn-${i}','✓ COPIED','⎘ COPY')" id="copy-btn-${i}">⎘ COPY</button>
-      </div>
-      <div class="email-body" id="email-body-${i}">Subject: ${esc(e.subject)}\n\n${esc(e.body)}</div>
-    </div>`).join("");
+const emailsHtml = state.outreachEmails.map((e,i)=>` <div class="card"> <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"> <div style="display:flex;gap:10px;align-items:center"> <span class="day-tag">DAY ${e.day}</span> <div style="font-size:12px;font-weight:700">Subject: ${esc(e.subject)}</div> </div> <button class="btn sm muted" onclick="copyText('email-body-${i}','copy-btn-${i}','✓ COPIED','⎘ COPY')" id="copy-btn-${i}">⎘ COPY</button> </div> <div class="email-body" id="email-body-${i}">Subject: ${esc(e.subject)}\n\n${esc(e.body)}</div> </div>`).join(””);
 
-  document.getElementById("tab-outreach").innerHTML = `
-    <div class="lbl acc">// AI ENGINE</div>
-    <div class="section-title">Cold Outreach Generator</div>
-    <div class="section-sub">5-email sequences personalized per target · AI-generated · copy and send</div>
-    
-    <div class="card" style="margin-bottom:16px">
-      <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:flex-end">
-        <div>
-          <div class="lbl">SELECT TARGET COMPANY</div>
-          <select onchange="state.outreachTargetId=this.value;renderAll()">
-            <option value="">-- Choose a target --</option>
-            ${targetOpts}
-          </select>
-        </div>
-        ${recoveryBadge}
-        <button class="btn" onclick="generateEmails()" ${!state.outreachTargetId||state.outreachLoading?"disabled":""}>
-          ${state.outreachLoading?`<span class="spinner"></span> GENERATING...`:"⚡ GENERATE"}
-        </button>
-      </div>
-      ${state.outreachError?`<div style="margin-top:8px;color:var(--red);font-size:11px">${esc(state.outreachError)}</div>`:""}
+document.getElementById(“tab-outreach”).innerHTML = `
+<div class="lbl acc">// AI ENGINE</div>
+<div class="section-title">Cold Outreach Generator</div>
+<div class="section-sub">5-email sequences personalized per target · AI-generated · copy and send</div>
+
+```
+<div class="card" style="margin-bottom:16px">
+  <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:flex-end">
+    <div>
+      <div class="lbl">SELECT TARGET COMPANY</div>
+      <select onchange="state.outreachTargetId=this.value;renderAll()">
+        <option value="">-- Choose a target --</option>
+        ${targetOpts}
+      </select>
     </div>
-    ${emailsHtml}`;
+    ${recoveryBadge}
+    <button class="btn" onclick="generateEmails()" ${!state.outreachTargetId||state.outreachLoading?"disabled":""}>
+      ${state.outreachLoading?`<span class="spinner"></span> GENERATING...`:"⚡ GENERATE"}
+    </button>
+  </div>
+  ${state.outreachError?`<div style="margin-top:8px;color:var(--red);font-size:11px">${esc(state.outreachError)}</div>`:""}
+</div>
+${emailsHtml}`;
+```
+
 }
 
 async function generateEmails() {
-  const t = state.targets.find(x=>x.id==state.outreachTargetId);
-  if (!t) return;
-  state.outreachLoading = true; state.outreachError = ""; state.outreachEmails = [];
-  renderAll();
-  try {
-    const text = await callClaude(
-      "You are an expert B2B cold email copywriter specializing in industrial asset recovery. Write direct, professional, value-first emails. Respond with valid JSON only — no markdown, no explanation.",
-      `Generate a 5-email cold outreach sequence to the CFO or VP Operations at ${t.company} (${t.location}).
+const t = state.targets.find(x=>x.id==state.outreachTargetId);
+if (!t) return;
+state.outreachLoading = true; state.outreachError = “”; state.outreachEmails = [];
+renderAll();
+try {
+const text = await callClaude(
+“You are an expert B2B cold email copywriter specializing in industrial asset recovery. Write direct, professional, value-first emails. Respond with valid JSON only — no markdown, no explanation.”,
+`Generate a 5-email cold outreach sequence to the CFO or VP Operations at ${t.company} (${t.location}).
 Industry: ${t.industry}. Workers: ${t.workers} as of ${t.date}.
-Assets: ${t.assets.join(", ")}.
+Assets: ${t.assets.join(”, “)}.
 Recovery potential: ${fmt(t.low)}-${fmt(t.high)}.
 Notes: ${t.notes}
 
@@ -686,376 +684,301 @@ Sender: independent stranded asset recovery consultant.
 Offer: FREE assessment, zero upfront, 12% success fee only on recovered value.
 
 Return JSON only:
-{"emails":[{"day":1,"subject":"...","body":"..."},{"day":3,"subject":"...","body":"..."},{"day":7,"subject":"...","body":"..."},{"day":14,"subject":"...","body":"..."},{"day":30,"subject":"...","body":"..."}]}`
-    );
-    const parsed = JSON.parse(text.replace(/```json|```/g,"").trim());
-    state.outreachEmails = parsed.emails;
-  } catch(e) {
-    state.outreachError = "Generation failed — check your API key in Settings.";
-  }
-  state.outreachLoading = false;
-  renderAll();
+{“emails”:[{“day”:1,“subject”:”…”,“body”:”…”},{“day”:3,“subject”:”…”,“body”:”…”},{“day”:7,“subject”:”…”,“body”:”…”},{“day”:14,“subject”:”…”,“body”:”…”},{“day”:30,“subject”:”…”,“body”:”…”}]}`
+);
+const parsed = JSON.parse(text.replace(/`json|`/g,””).trim());
+state.outreachEmails = parsed.emails;
+} catch(e) {
+state.outreachError = “Generation failed — check your API key in Settings.”;
+}
+state.outreachLoading = false;
+renderAll();
 }
 
 /* ════════════════════════════════════════════
-   VALUATION
+VALUATION
 ════════════════════════════════════════════ */
-const ASSET_CATS = ["Manufacturing Equipment","Commercial Vehicles","Food Processing Equipment","IT Hardware","Office Furniture","Medical Equipment","Brewery Equipment","Warehouse Equipment","Raw Materials / Inventory","Rail & Specialty Equipment","Other"];
-const CONDITIONS  = ["Excellent","Good","Fair","Poor"];
+const ASSET_CATS = [“Manufacturing Equipment”,“Commercial Vehicles”,“Food Processing Equipment”,“IT Hardware”,“Office Furniture”,“Medical Equipment”,“Brewery Equipment”,“Warehouse Equipment”,“Raw Materials / Inventory”,“Rail & Specialty Equipment”,“Other”];
+const CONDITIONS  = [“Excellent”,“Good”,“Fair”,“Poor”];
 
 function renderValuation() {
-    const targetOpts = state.targets.map(t=>`<option value="${t.id}" ${t.id==state.valTargetId?"selected":""}>${esc(t.company)} — ${esc(t.location)}</option>`).join("");
+const targetOpts = state.targets.map(t=>`<option value="${t.id}" ${t.id==state.valTargetId?"selected":""}>${esc(t.company)} — ${esc(t.location)}</option>`).join(””);
 
-  const itemsHtml = state.valItems.map((a,i)=>{
-    const catOpts    = ASSET_CATS.map(c=>`<option value="${c}" ${c===a.cat?"selected":""}>${c}</option>`).join("");
-    const condOpts   = CONDITIONS.map(c=>`<option value="${c}" ${c===a.cond?"selected":""}>${c}</option>`).join("");
-    return `
-      <div class="asset-item">
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-          <span class="lbl" style="margin-bottom:0">ASSET ${i+1}</span>
-          ${state.valItems.length>1?`<span style="cursor:pointer;color:var(--red);font-size:12px" onclick="removeValItem(${i})">✕</span>`:""}
-        </div>
-        <div class="flex-col gap8">
-          <select onchange="updValItem(${i},'cat',this.value)"><option value="">Category...</option>${catOpts}</select>
-          <input class="inp" type="text" value="${esc(a.desc)}" placeholder="Brand / model / description..." oninput="updValItem(${i},'desc',this.value)" />
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px">
-            <input class="inp" type="number" min="1" value="${a.qty}" oninput="updValItem(${i},'qty',parseInt(this.value)||1)" />
-            <input class="inp" type="text" value="${esc(a.year)}" placeholder="Year" oninput="updValItem(${i},'year',this.value)" />
-            <select onchange="updValItem(${i},'cond',this.value)">${condOpts}</select>
-          </div>
-        </div>
-      </div>`;
-  }).join("");
+const itemsHtml = state.valItems.map((a,i)=>{
+const catOpts    = ASSET_CATS.map(c=>`<option value="${c}" ${c===a.cat?"selected":""}>${c}</option>`).join(””);
+const condOpts   = CONDITIONS.map(c=>`<option value="${c}" ${c===a.cond?"selected":""}>${c}</option>`).join(””);
+return ` <div class="asset-item"> <div style="display:flex;justify-content:space-between;margin-bottom:6px"> <span class="lbl" style="margin-bottom:0">ASSET ${i+1}</span> ${state.valItems.length>1?`<span style="cursor:pointer;color:var(--red);font-size:12px" onclick="removeValItem(${i})">✕</span>`:""} </div> <div class="flex-col gap8"> <select onchange="updValItem(${i},'cat',this.value)"><option value="">Category...</option>${catOpts}</select> <input class="inp" type="text" value="${esc(a.desc)}" placeholder="Brand / model / description..." oninput="updValItem(${i},'desc',this.value)" /> <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px"> <input class="inp" type="number" min="1" value="${a.qty}" oninput="updValItem(${i},'qty',parseInt(this.value)||1)" /> <input class="inp" type="text" value="${esc(a.year)}" placeholder="Year" oninput="updValItem(${i},'year',this.value)" /> <select onchange="updValItem(${i},'cond',this.value)">${condOpts}</select> </div> </div> </div>`;
+}).join(””);
 
-  let resultHtml = `<div class="card" style="display:flex;align-items:center;justify-content:center;min-height:320px;flex-direction:column;gap:12px">
-    <div style="font-size:40px;color:var(--td)">📊</div>
-    <div style="color:var(--td);font-size:12px">Enter assets and click Generate Estimate</div>
+let resultHtml = `<div class="card" style="display:flex;align-items:center;justify-content:center;min-height:320px;flex-direction:column;gap:12px">
+<div style="font-size:40px;color:var(--td)">📊</div>
+<div style="color:var(--td);font-size:12px">Enter assets and click Generate Estimate</div>
+
   </div>`;
 
-  if (state.valResult) {
-    const r = state.valResult;
-    const breakdown = (r.assets||[]).map(a=>`
-      <div class="bk-row">
-        <div><div style="font-size:12px;font-weight:600">${esc(a.name)}</div><div style="font-size:9px;color:var(--td);margin-top:2px">${esc(a.notes||"")}</div></div>
-        <div style="font-size:12px;color:var(--tm)">${a.qty}</div>
-        <div style="font-size:11px;color:var(--grn)">${fmt(a.unitLow)}-${fmt(a.unitHigh)}</div>
-        <div style="font-size:12px;color:var(--grn);font-weight:700">${fmt(a.totalLow)}-${fmt(a.totalHigh)}</div>
-        <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:${a.confidence==="high"?"var(--grn)":a.confidence==="medium"?"var(--acc)":"var(--red)"}">${(a.confidence||"").toUpperCase()}</div>
-        <div style="font-size:10px;color:var(--tm)">${esc(a.channel||"")}</div>
-      </div>`).join("");
+if (state.valResult) {
+const r = state.valResult;
+const breakdown = (r.assets||[]).map(a=>` <div class="bk-row"> <div><div style="font-size:12px;font-weight:600">${esc(a.name)}</div><div style="font-size:9px;color:var(--td);margin-top:2px">${esc(a.notes||"")}</div></div> <div style="font-size:12px;color:var(--tm)">${a.qty}</div> <div style="font-size:11px;color:var(--grn)">${fmt(a.unitLow)}-${fmt(a.unitHigh)}</div> <div style="font-size:12px;color:var(--grn);font-weight:700">${fmt(a.totalLow)}-${fmt(a.totalHigh)}</div> <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:${a.confidence==="high"?"var(--grn)":a.confidence==="medium"?"var(--acc)":"var(--red)"}">${(a.confidence||"").toUpperCase()}</div> <div style="font-size:10px;color:var(--tm)">${esc(a.channel||"")}</div> </div>`).join(””);
 
-    resultHtml = `
-      <div class="flex-col gap12">
-        <div class="g3">
-          <div class="card"><div class="lbl">RECOVERY RANGE</div><div style="font-size:22px;color:var(--grn);font-weight:700">${fmt(r.totalLow)}</div><div style="font-size:13px;color:var(--tm)">to ${fmt(r.totalHigh)}</div></div>
-          <div class="card"><div class="lbl">YOUR FEE @ 12%</div><div style="font-size:22px;color:var(--acc);font-weight:700">${fmt(r.feeLow)}</div><div style="font-size:13px;color:var(--tm)">to ${fmt(r.feeHigh)}</div></div>
-          <div class="card"><div class="lbl">TIMELINE</div><div style="font-size:16px;font-weight:700;margin-top:4px">${esc(r.timeline||"")}</div><div style="font-size:10px;color:var(--td)">via ${esc(r.topChannel||"")}</div></div>
-        </div>
-        <div class="card" style="border:1px solid rgba(45,122,80,.4)">
-          <div class="lbl acc">STRATEGIC INSIGHT</div>
-          <div style="font-size:12px;color:var(--tm);line-height:1.8">${esc(r.insight||"")}</div>
-        </div>
-        <div class="card" style="padding:0">
-          <div style="padding:10px 14px;border-bottom:1px solid var(--bd);background:var(--s2)"><div class="lbl" style="margin-bottom:0">ASSET BREAKDOWN</div></div>
-          <div class="bk-hd">${["ASSET","QTY","UNIT VALUE","TOTAL","CONFIDENCE","CHANNEL"].map(h=>`<div class="bk-col-hd">${h}</div>`).join("")}</div>
-          ${breakdown}
-        </div>
-      </div>`;
-  }
+```
+resultHtml = `
+  <div class="flex-col gap12">
+    <div class="g3">
+      <div class="card"><div class="lbl">RECOVERY RANGE</div><div style="font-size:22px;color:var(--grn);font-weight:700">${fmt(r.totalLow)}</div><div style="font-size:13px;color:var(--tm)">to ${fmt(r.totalHigh)}</div></div>
+      <div class="card"><div class="lbl">YOUR FEE @ 12%</div><div style="font-size:22px;color:var(--acc);font-weight:700">${fmt(r.feeLow)}</div><div style="font-size:13px;color:var(--tm)">to ${fmt(r.feeHigh)}</div></div>
+      <div class="card"><div class="lbl">TIMELINE</div><div style="font-size:16px;font-weight:700;margin-top:4px">${esc(r.timeline||"")}</div><div style="font-size:10px;color:var(--td)">via ${esc(r.topChannel||"")}</div></div>
+    </div>
+    <div class="card" style="border:1px solid rgba(45,122,80,.4)">
+      <div class="lbl acc">STRATEGIC INSIGHT</div>
+      <div style="font-size:12px;color:var(--tm);line-height:1.8">${esc(r.insight||"")}</div>
+    </div>
+    <div class="card" style="padding:0">
+      <div style="padding:10px 14px;border-bottom:1px solid var(--bd);background:var(--s2)"><div class="lbl" style="margin-bottom:0">ASSET BREAKDOWN</div></div>
+      <div class="bk-hd">${["ASSET","QTY","UNIT VALUE","TOTAL","CONFIDENCE","CHANNEL"].map(h=>`<div class="bk-col-hd">${h}</div>`).join("")}</div>
+      ${breakdown}
+    </div>
+  </div>`;
+```
 
-  document.getElementById("tab-valuation").innerHTML = `
-    <div class="lbl acc">// AI ENGINE</div>
-    <div class="section-title">Asset Valuation Engine</div>
-    <div class="section-sub">Input any asset list · AI estimates per-asset recovery value, best channels, and timeline</div>
-    
-    <div style="display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start">
-      <div class="flex-col gap12">
-        <div class="card">
-          <div class="lbl">LINK TO TARGET (OPTIONAL)</div>
-          <select onchange="state.valTargetId=this.value;autoFillVal(this.value);renderAll()">
-            <option value="">Ad-hoc assessment</option>
-            ${targetOpts}
-          </select>
-        </div>
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-            <div class="lbl" style="margin-bottom:0">ASSET INVENTORY</div>
-            <button class="btn sm grn" onclick="addValItem()">+ ADD</button>
-          </div>
-          ${itemsHtml}
-        </div>
-        <button class="btn full" onclick="generateValuation()" ${state.valLoading||state.valItems.every(a=>!a.desc&&!a.cat)?"disabled":""}>
-          ${state.valLoading?`<span class="spinner"></span> ANALYZING...`:"⚡ GENERATE ESTIMATE"}
-        </button>
-        ${state.valError?`<div style="color:var(--red);font-size:11px">${esc(state.valError)}</div>`:""}
-      </div>
-      <div>${resultHtml}</div>
-    </div>`;
 }
 
-function addValItem()    { state.valItems.push({cat:"",desc:"",qty:1,year:"",cond:"Good"}); renderAll(); }
+document.getElementById(“tab-valuation”).innerHTML = `
+<div class="lbl acc">// AI ENGINE</div>
+<div class="section-title">Asset Valuation Engine</div>
+<div class="section-sub">Input any asset list · AI estimates per-asset recovery value, best channels, and timeline</div>
+
+```
+<div style="display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start">
+  <div class="flex-col gap12">
+    <div class="card">
+      <div class="lbl">LINK TO TARGET (OPTIONAL)</div>
+      <select onchange="state.valTargetId=this.value;autoFillVal(this.value);renderAll()">
+        <option value="">Ad-hoc assessment</option>
+        ${targetOpts}
+      </select>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="lbl" style="margin-bottom:0">ASSET INVENTORY</div>
+        <button class="btn sm grn" onclick="addValItem()">+ ADD</button>
+      </div>
+      ${itemsHtml}
+    </div>
+    <button class="btn full" onclick="generateValuation()" ${state.valLoading||state.valItems.every(a=>!a.desc&&!a.cat)?"disabled":""}>
+      ${state.valLoading?`<span class="spinner"></span> ANALYZING...`:"⚡ GENERATE ESTIMATE"}
+    </button>
+    ${state.valError?`<div style="color:var(--red);font-size:11px">${esc(state.valError)}</div>`:""}
+  </div>
+  <div>${resultHtml}</div>
+</div>`;
+```
+
+}
+
+function addValItem()    { state.valItems.push({cat:””,desc:””,qty:1,year:””,cond:“Good”}); renderAll(); }
 function removeValItem(i){ state.valItems.splice(i,1); renderAll(); }
 function updValItem(i,k,v){ state.valItems[i][k]=v; }
 function autoFillVal(id) {
-  const t = state.targets.find(x=>x.id==id);
-  if (t) state.valItems = t.assets.map(a=>({cat:"Manufacturing Equipment",desc:a,qty:1,year:"",cond:"Good"}));
-  else state.valItems = [{cat:"",desc:"",qty:1,year:"",cond:"Good"}];
+const t = state.targets.find(x=>x.id==id);
+if (t) state.valItems = t.assets.map(a=>({cat:“Manufacturing Equipment”,desc:a,qty:1,year:””,cond:“Good”}));
+else state.valItems = [{cat:””,desc:””,qty:1,year:””,cond:“Good”}];
 }
 
 async function generateValuation() {
-  state.valLoading = true; state.valResult = null; state.valError = "";
-  renderAll();
-  try {
-    const t    = state.targets.find(x=>x.id==state.valTargetId);
-    const list = state.valItems.map((a,i)=>`${i+1}. [${a.cat||"Unknown"}] ${a.desc||"—"} | Qty:${a.qty} | Year:${a.year||"N/A"} | Condition:${a.cond}`).join("\n");
-    const text = await callClaude(
-      "You are an expert industrial asset appraiser with 20+ years valuing stranded assets. Respond with valid JSON only — no markdown, no explanation.",
-      `Estimate fair market recovery values for these assets${t?` from ${t.company} (${t.location}, ${t.industry})`:""}:\n\n${list}\n\nReturn JSON:\n{"assets":[{"name":"","qty":0,"unitLow":0,"unitHigh":0,"totalLow":0,"totalHigh":0,"confidence":"high|medium|low","channel":"","notes":""}],"totalLow":0,"totalHigh":0,"feeLow":0,"feeHigh":0,"timeline":"","topChannel":"","insight":""}`
-    );
-    state.valResult = JSON.parse(text.replace(/```json|```/g,"").trim());
-  } catch(e) { state.valError = "Valuation failed — try again."; }
-  state.valLoading = false;
-  renderAll();
+state.valLoading = true; state.valResult = null; state.valError = “”;
+renderAll();
+try {
+const t    = state.targets.find(x=>x.id==state.valTargetId);
+const list = state.valItems.map((a,i)=>`${i+1}. [${a.cat||"Unknown"}] ${a.desc||"—"} | Qty:${a.qty} | Year:${a.year||"N/A"} | Condition:${a.cond}`).join(”\n”);
+const text = await callClaude(
+“You are an expert industrial asset appraiser with 20+ years valuing stranded assets. Respond with valid JSON only — no markdown, no explanation.”,
+`Estimate fair market recovery values for these assets${t?` from ${t.company} (${t.location}, ${t.industry})`:""}:\n\n${list}\n\nReturn JSON:\n{"assets":[{"name":"","qty":0,"unitLow":0,"unitHigh":0,"totalLow":0,"totalHigh":0,"confidence":"high|medium|low","channel":"","notes":""}],"totalLow":0,"totalHigh":0,"feeLow":0,"feeHigh":0,"timeline":"","topChannel":"","insight":""}`
+);
+state.valResult = JSON.parse(text.replace(/`json|`/g,””).trim());
+} catch(e) { state.valError = “Valuation failed — try again.”; }
+state.valLoading = false;
+renderAll();
 }
 
 /* ════════════════════════════════════════════
-   BUYERS
+BUYERS
 ════════════════════════════════════════════ */
 function renderBuyers() {
-  const cats = [...new Set(BUYERS.map(b=>b.category))];
-  const html = cats.map(cat=>`
-    <div style="margin-bottom:24px">
-      <div style="font-size:9px;color:var(--acc);letter-spacing:2.5px;font-weight:700;margin-bottom:10px;border-bottom:1px solid var(--bd);padding-bottom:6px">// ${cat.toUpperCase()}</div>
-      <div class="g3">
-        ${BUYERS.filter(b=>b.category===cat).map(b=>`
-          <div class="card">
-            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-              <div style="font-size:13px;font-weight:700">${esc(b.name)}</div>
-              <span style="font-size:9px;color:var(--grn);font-weight:700">${b.min}</span>
-            </div>
-            <div style="font-size:11px;color:var(--tm);margin-bottom:6px">${esc(b.note)}</div>
-            <div style="font-size:10px;color:var(--td)">${b.url}</div>
-          </div>`).join("")}
-      </div>
-    </div>`).join("");
+const cats = […new Set(BUYERS.map(b=>b.category))];
+const html = cats.map(cat=>` <div style="margin-bottom:24px"> <div style="font-size:9px;color:var(--acc);letter-spacing:2.5px;font-weight:700;margin-bottom:10px;border-bottom:1px solid var(--bd);padding-bottom:6px">// ${cat.toUpperCase()}</div> <div class="g3"> ${BUYERS.filter(b=>b.category===cat).map(b=>`
+<div class="card">
+<div style="display:flex;justify-content:space-between;margin-bottom:6px">
+<div style="font-size:13px;font-weight:700">${esc(b.name)}</div>
+<span style="font-size:9px;color:var(--grn);font-weight:700">${b.min}</span>
+</div>
+<div style="font-size:11px;color:var(--tm);margin-bottom:6px">${esc(b.note)}</div>
+<div style="font-size:10px;color:var(--td)">${b.url}</div>
+</div>`).join("")} </div> </div>`).join(””);
 
-  document.getElementById("tab-buyers").innerHTML = `
-    <div class="lbl acc">// BUYER NETWORK</div>
-    <div class="section-title">Buyer Database</div>
-    <div class="section-sub">Pre-vetted buyer channels by asset type · most will bid within 48 hours</div>
-    ${html}`;
+document.getElementById(“tab-buyers”).innerHTML = ` <div class="lbl acc">// BUYER NETWORK</div> <div class="section-title">Buyer Database</div> <div class="section-sub">Pre-vetted buyer channels by asset type · most will bid within 48 hours</div> ${html}`;
 }
 
 /* ════════════════════════════════════════════
-   PIPELINE
+PIPELINE
 ════════════════════════════════════════════ */
 function renderPipeline() {
-  const totalPipeline = state.targets.filter(t=>t.stage!=="Prospecting"&&t.stage!=="Closed").reduce((s,t)=>s+t.high,0);
-  const totalClosed   = state.targets.filter(t=>t.stage==="Closed").reduce((s,t)=>s+t.high,0);
+const totalPipeline = state.targets.filter(t=>t.stage!==“Prospecting”&&t.stage!==“Closed”).reduce((s,t)=>s+t.high,0);
+const totalClosed   = state.targets.filter(t=>t.stage===“Closed”).reduce((s,t)=>s+t.high,0);
 
-  const cols = STAGES.map(stage=>{
-    const st  = state.targets.filter(t=>t.stage===stage);
-    const sv  = st.reduce((s,t)=>s+t.high,0);
-    const idx = STAGES.indexOf(stage);
-    const cards = st.map(t=>`
-      <div class="deal-card">
-        <div style="font-size:11px;font-weight:700;margin-bottom:2px">${esc(t.company)}</div>
-        <div style="font-size:9px;color:var(--td);margin-bottom:6px">${esc(t.location)}</div>
-        <div style="font-size:12px;color:var(--grn);font-weight:700">${fmt(t.low)}-${fmt(t.high)}</div>
-        <div style="font-size:9px;color:var(--acc);margin-bottom:8px">fee: ${fee(t.high)}</div>
-        ${badge(t.priority)}
-        <div style="display:flex;gap:4px;margin-top:8px">
-          ${idx>0?`<button style="flex:1;background:var(--s2);border:1px solid var(--bd);color:var(--td);font-size:8px;padding:4px 2px;cursor:pointer;font-family:var(--ff);border-radius:2px" onclick="moveTarget(${t.id},-1)">← BACK</button>`:""}
-          ${idx<STAGES.length-1?`<button style="flex:1;background:var(--adim);border:1px solid var(--acc);color:var(--acc);font-size:8px;padding:4px 2px;cursor:pointer;font-family:var(--ff);border-radius:2px" onclick="moveTarget(${t.id},1)">NEXT →</button>`:""}
-        </div>
-      </div>`).join("");
+const cols = STAGES.map(stage=>{
+const st  = state.targets.filter(t=>t.stage===stage);
+const sv  = st.reduce((s,t)=>s+t.high,0);
+const idx = STAGES.indexOf(stage);
+const cards = st.map(t=>` <div class="deal-card"> <div style="font-size:11px;font-weight:700;margin-bottom:2px">${esc(t.company)}</div> <div style="font-size:9px;color:var(--td);margin-bottom:6px">${esc(t.location)}</div> <div style="font-size:12px;color:var(--grn);font-weight:700">${fmt(t.low)}-${fmt(t.high)}</div> <div style="font-size:9px;color:var(--acc);margin-bottom:8px">fee: ${fee(t.high)}</div> ${badge(t.priority)} <div style="display:flex;gap:4px;margin-top:8px"> ${idx>0?`<button style="flex:1;background:var(--s2);border:1px solid var(--bd);color:var(--td);font-size:8px;padding:4px 2px;cursor:pointer;font-family:var(--ff);border-radius:2px" onclick="moveTarget(${t.id},-1)">← BACK</button>`:""} ${idx<STAGES.length-1?`<button style="flex:1;background:var(--adim);border:1px solid var(--acc);color:var(--acc);font-size:8px;padding:4px 2px;cursor:pointer;font-family:var(--ff);border-radius:2px" onclick="moveTarget(${t.id},1)">NEXT →</button>`:""} </div> </div>`).join(””);
 
-    return `
-      <div class="stage-col">
-        <div class="stage-hd" style="border-bottom:2px solid ${STAGE_CLR[stage]}">
-          <div style="font-size:9px;font-weight:700;color:${STAGE_CLR[stage]};letter-spacing:1.5px">${stage.toUpperCase()}</div>
-          <div style="font-size:10px;color:var(--td)">${st.length} deal${st.length!==1?"s":""}${sv>0?` <span style="color:var(--grn)">${fmt(sv)}</span>`:""}</div>
-        </div>
-        ${cards}
-      </div>`;
-  }).join("");
-
-  document.getElementById("tab-pipeline").innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
-      <div>
-        <div class="lbl acc">// DEAL FLOW</div>
-        <div class="section-title">Pipeline Tracker</div>
-        <div class="section-sub" style="margin-bottom:0">Click NEXT to advance deals through stages</div>
-      </div>
-      <div style="display:flex;gap:16px">
-        <div style="text-align:right"><div style="font-size:9px;color:var(--td);letter-spacing:2px">ACTIVE PIPELINE</div><div style="font-size:18px;color:var(--acc);font-weight:700">${fmt(totalPipeline)}</div></div>
-        <div style="text-align:right"><div style="font-size:9px;color:var(--td);letter-spacing:2px">CLOSED</div><div style="font-size:18px;color:var(--grn);font-weight:700">${fmt(totalClosed)}</div></div>
-      </div>
+```
+return `
+  <div class="stage-col">
+    <div class="stage-hd" style="border-bottom:2px solid ${STAGE_CLR[stage]}">
+      <div style="font-size:9px;font-weight:700;color:${STAGE_CLR[stage]};letter-spacing:1.5px">${stage.toUpperCase()}</div>
+      <div style="font-size:10px;color:var(--td)">${st.length} deal${st.length!==1?"s":""}${sv>0?` <span style="color:var(--grn)">${fmt(sv)}</span>`:""}</div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">${cols}</div>`;
+    ${cards}
+  </div>`;
+```
+
+}).join(””);
+
+document.getElementById(“tab-pipeline”).innerHTML = ` <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px"> <div> <div class="lbl acc">// DEAL FLOW</div> <div class="section-title">Pipeline Tracker</div> <div class="section-sub" style="margin-bottom:0">Click NEXT to advance deals through stages</div> </div> <div style="display:flex;gap:16px"> <div style="text-align:right"><div style="font-size:9px;color:var(--td);letter-spacing:2px">ACTIVE PIPELINE</div><div style="font-size:18px;color:var(--acc);font-weight:700">${fmt(totalPipeline)}</div></div> <div style="text-align:right"><div style="font-size:9px;color:var(--td);letter-spacing:2px">CLOSED</div><div style="font-size:18px;color:var(--grn);font-weight:700">${fmt(totalClosed)}</div></div> </div> </div> <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">${cols}</div>`;
 }
 
 function moveTarget(id, dir) {
-  const t = state.targets.find(x=>x.id===id);
-  if (!t) return;
-  const i = STAGES.indexOf(t.stage);
-  t.stage = STAGES[Math.min(Math.max(i+dir,0),STAGES.length-1)];
-  saveTargets();
-  renderAll();
+const t = state.targets.find(x=>x.id===id);
+if (!t) return;
+const i = STAGES.indexOf(t.stage);
+t.stage = STAGES[Math.min(Math.max(i+dir,0),STAGES.length-1)];
+saveTargets();
+renderAll();
 }
 
 /* ════════════════════════════════════════════
-   DOCUMENTS
+DOCUMENTS
 ════════════════════════════════════════════ */
 const DOC_TYPES = [
-  {id:"capability", label:"CAPABILITY STATEMENT", desc:"One-pager for cold outreach"},
-  {id:"agreement",  label:"FEE AGREEMENT",        desc:"12% success fee contract"},
-  {id:"assessment", label:"RECOVERY ASSESSMENT",  desc:"CFO-ready asset report"},
-  {id:"intro",      label:"INTRO EMAIL",          desc:"First-touch personalized email"},
+{id:“capability”, label:“CAPABILITY STATEMENT”, desc:“One-pager for cold outreach”},
+{id:“agreement”,  label:“FEE AGREEMENT”,        desc:“12% success fee contract”},
+{id:“assessment”, label:“RECOVERY ASSESSMENT”,  desc:“CFO-ready asset report”},
+{id:“intro”,      label:“INTRO EMAIL”,          desc:“First-touch personalized email”},
 ];
 
 function renderDocs() {
-    const needsTarget = ["agreement","assessment","intro"].includes(state.docType);
-  const targetOpts = state.targets.map(t=>`<option value="${t.id}" ${t.id==state.docTargetId?"selected":""}>${esc(t.company)}</option>`).join("");
+const needsTarget = [“agreement”,“assessment”,“intro”].includes(state.docType);
+const targetOpts = state.targets.map(t=>`<option value="${t.id}" ${t.id==state.docTargetId?"selected":""}>${esc(t.company)}</option>`).join(””);
 
-  const docTypeBtns = DOC_TYPES.map(d=>`
-    <div class="doc-type-opt ${d.id===state.docType?"sel":""}" onclick="state.docType='${d.id}';state.docText='';renderAll()">
-      <div class="dt-label">${d.label}</div>
-      <div class="dt-desc">${d.desc}</div>
-    </div>`).join("");
+const docTypeBtns = DOC_TYPES.map(d=>` <div class="doc-type-opt ${d.id===state.docType?"sel":""}" onclick="state.docType='${d.id}';state.docText='';renderAll()"> <div class="dt-label">${d.label}</div> <div class="dt-desc">${d.desc}</div> </div>`).join(””);
 
-  const outputArea = state.docText
-    ? `<div style="position:relative;padding:16px;background:var(--s1);border:1px solid var(--bd);border-radius:4px;min-height:400px">
-        <div style="position:absolute;top:12px;right:12px">
-          <button class="btn sm muted" id="doc-copy-btn" onclick="copyDocText()">⎘ COPY ALL</button>
-        </div>
-        <div class="doc-output" id="doc-output-text">${esc(state.docText)}</div>
-      </div>`
-    : `<div class="card" style="display:flex;align-items:center;justify-content:center;min-height:400px;flex-direction:column;gap:12px">
-        <div style="font-size:40px;color:var(--td)">📄</div>
-        <div style="color:var(--td);font-size:12px">Select a document type and click Generate</div>
-      </div>`;
+const outputArea = state.docText
+? `<div style="position:relative;padding:16px;background:var(--s1);border:1px solid var(--bd);border-radius:4px;min-height:400px"> <div style="position:absolute;top:12px;right:12px"> <button class="btn sm muted" id="doc-copy-btn" onclick="copyDocText()">⎘ COPY ALL</button> </div> <div class="doc-output" id="doc-output-text">${esc(state.docText)}</div> </div>`
+: `<div class="card" style="display:flex;align-items:center;justify-content:center;min-height:400px;flex-direction:column;gap:12px"> <div style="font-size:40px;color:var(--td)">📄</div> <div style="color:var(--td);font-size:12px">Select a document type and click Generate</div> </div>`;
 
-  document.getElementById("tab-docs").innerHTML = `
-    <div class="lbl acc">// AI ENGINE</div>
-    <div class="section-title">Document Generator</div>
-    <div class="section-sub">Professional documents on demand · capability statements · agreements · assessments</div>
-    
-    <div style="display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:start">
-      <div class="flex-col gap12">
-        <div class="card">
-          <div class="lbl">DOCUMENT TYPE</div>
-          ${docTypeBtns}
-        </div>
-        <div class="card">
-          <div class="lbl">YOUR DETAILS</div>
-          <div class="flex-col gap8">
-            <input class="inp" type="text" value="${esc(state.docName)}" placeholder="Your name..." oninput="state.docName=this.value" />
-            <input class="inp" type="text" value="${esc(state.docCompany)}" placeholder="Your company..." oninput="state.docCompany=this.value" />
-            ${needsTarget?`
-              <div class="lbl" style="margin-top:4px;margin-bottom:4px">TARGET COMPANY</div>
-              <select onchange="state.docTargetId=this.value">
-                <option value="">Select target...</option>
-                ${targetOpts}
-              </select>`:""}
-          </div>
-        </div>
-        <button class="btn full" onclick="generateDoc()" ${state.docLoading?"disabled":""}>
-          ${state.docLoading?`<span class="spinner"></span> GENERATING...`:"⚡ GENERATE DOCUMENT"}
-        </button>
-        ${state.docError?`<div style="color:var(--red);font-size:11px">${esc(state.docError)}</div>`:""}
+document.getElementById(“tab-docs”).innerHTML = `
+<div class="lbl acc">// AI ENGINE</div>
+<div class="section-title">Document Generator</div>
+<div class="section-sub">Professional documents on demand · capability statements · agreements · assessments</div>
+
+```
+<div style="display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:start">
+  <div class="flex-col gap12">
+    <div class="card">
+      <div class="lbl">DOCUMENT TYPE</div>
+      ${docTypeBtns}
+    </div>
+    <div class="card">
+      <div class="lbl">YOUR DETAILS</div>
+      <div class="flex-col gap8">
+        <input class="inp" type="text" value="${esc(state.docName)}" placeholder="Your name..." oninput="state.docName=this.value" />
+        <input class="inp" type="text" value="${esc(state.docCompany)}" placeholder="Your company..." oninput="state.docCompany=this.value" />
+        ${needsTarget?`
+          <div class="lbl" style="margin-top:4px;margin-bottom:4px">TARGET COMPANY</div>
+          <select onchange="state.docTargetId=this.value">
+            <option value="">Select target...</option>
+            ${targetOpts}
+          </select>`:""}
       </div>
-      ${outputArea}
-    </div>`;
+    </div>
+    <button class="btn full" onclick="generateDoc()" ${state.docLoading?"disabled":""}>
+      ${state.docLoading?`<span class="spinner"></span> GENERATING...`:"⚡ GENERATE DOCUMENT"}
+    </button>
+    ${state.docError?`<div style="color:var(--red);font-size:11px">${esc(state.docError)}</div>`:""}
+  </div>
+  ${outputArea}
+</div>`;
+```
+
 }
 
 async function generateDoc() {
-  state.docLoading = true; state.docText = ""; state.docError = "";
-  renderAll();
-  const who = state.docName || "the consultant", firm = state.docCompany || "Reclaim Solutions";
-  const t   = state.targets.find(x=>x.id==state.docTargetId);
-  const co  = t ? t.company : "[CLIENT]", loc = t ? t.location : "";
-  const ind = t ? t.industry : "", asts = t ? t.assets.join(", ") : "";
-  const wkrs = t ? t.workers : "", dt = t ? t.date : "";
-  const lo = t ? fmt(t.low) : "", hi = t ? fmt(t.high) : "", nt = t ? t.notes : "";
+state.docLoading = true; state.docText = “”; state.docError = “”;
+renderAll();
+const who = state.docName || “the consultant”, firm = state.docCompany || “Reclaim Solutions”;
+const t   = state.targets.find(x=>x.id==state.docTargetId);
+const co  = t ? t.company : “[CLIENT]”, loc = t ? t.location : “”;
+const ind = t ? t.industry : “”, asts = t ? t.assets.join(”, “) : “”;
+const wkrs = t ? t.workers : “”, dt = t ? t.date : “”;
+const lo = t ? fmt(t.low) : “”, hi = t ? fmt(t.high) : “”, nt = t ? t.notes : “”;
 
-  const prompts = {
-    capability: `Write a professional one-page capability statement for ${who} at ${firm}, a stranded asset recovery consultant. Sections: What We Do, How It Works (3 steps: assess, market, close), Our Offer (free assessment, 12% success fee, zero upfront), Who We Serve (PE-backed companies, plant closures, bankruptcy estates), Why Work With Us. 350-400 words. Clear section headers.`,
-    agreement:  `Write a professional asset recovery broker agreement between ${firm} ("Broker") and ${co} ("Client")${loc?` in ${loc}`:""}.  Sections: Recitals, Scope (identify buyers for stranded assets), Compensation (12% success fee on gross recovered proceeds), Exclusivity (90 days), Payment Terms (net 30), Representations, Liability Limitations, Term & Termination, Governing Law (New Jersey), Signatures. Plain language. Numbered sections.`,
-    assessment: `Write a one-page asset recovery opportunity assessment for ${co}${loc?` in ${loc}`:""}. ${ind?`Industry: ${ind}.`:""} ${wkrs?`Workers affected: ${wkrs} as of ${dt}.`:""} ${asts?`Assets: ${asts}.`:""} ${nt?`Context: ${nt}`:""}  ${lo&&hi?`Estimated recovery: ${lo}-${hi}.`:""}\n\nSections: Executive Summary, Asset Overview, Recovery Scenarios (conservative/base/optimistic), Recommended Channels, Timeline, Next Steps. Professional, CFO-ready. 400-450 words.`,
-    intro:      `Write a short professional email from ${who} at ${firm} to the CFO or VP Operations at ${co}${loc?` in ${loc}`:""}. ${wkrs?`They had ${wkrs} workers affected as of ${dt}.`:""} ${asts?`Assets include: ${asts}.`:""} ${nt?`Notes: ${nt}`:""} Three short paragraphs. Focus on value. Low-pressure CTA: free assessment, no cost, no obligation. No bullets. Subject line first.`,
-  };
+const prompts = {
+capability: `Write a professional one-page capability statement for ${who} at ${firm}, a stranded asset recovery consultant. Sections: What We Do, How It Works (3 steps: assess, market, close), Our Offer (free assessment, 12% success fee, zero upfront), Who We Serve (PE-backed companies, plant closures, bankruptcy estates), Why Work With Us. 350-400 words. Clear section headers.`,
+agreement:  `Write a professional asset recovery broker agreement between ${firm} ("Broker") and ${co} ("Client")${loc?` in ${loc}`:""}.  Sections: Recitals, Scope (identify buyers for stranded assets), Compensation (12% success fee on gross recovered proceeds), Exclusivity (90 days), Payment Terms (net 30), Representations, Liability Limitations, Term & Termination, Governing Law (New Jersey), Signatures. Plain language. Numbered sections.`,
+assessment: `Write a one-page asset recovery opportunity assessment for ${co}${loc?` in ${loc}`:""}. ${ind?`Industry: ${ind}.`:""} ${wkrs?`Workers affected: ${wkrs} as of ${dt}.`:""} ${asts?`Assets: ${asts}.`:""} ${nt?`Context: ${nt}`:""}  ${lo&&hi?`Estimated recovery: ${lo}-${hi}.`:""}\n\nSections: Executive Summary, Asset Overview, Recovery Scenarios (conservative/base/optimistic), Recommended Channels, Timeline, Next Steps. Professional, CFO-ready. 400-450 words.`,
+intro:      `Write a short professional email from ${who} at ${firm} to the CFO or VP Operations at ${co}${loc?` in ${loc}`:""}. ${wkrs?`They had ${wkrs} workers affected as of ${dt}.`:""} ${asts?`Assets include: ${asts}.`:""} ${nt?`Notes: ${nt}`:""} Three short paragraphs. Focus on value. Low-pressure CTA: free assessment, no cost, no obligation. No bullets. Subject line first.`,
+};
 
-  try {
-    state.docText = await callClaude(
-      "You are an expert business consultant and professional writer. Write clean professional documents. No markdown code fences in your output.",
-      prompts[state.docType]
-    );
-  } catch(e) { state.docError = "Generation failed. Please try again."; }
-  state.docLoading = false;
-  renderAll();
+try {
+state.docText = await callClaude(
+“You are an expert business consultant and professional writer. Write clean professional documents. No markdown code fences in your output.”,
+prompts[state.docType]
+);
+} catch(e) { state.docError = “Generation failed. Please try again.”; }
+state.docLoading = false;
+renderAll();
 }
 
 function copyDocText() {
-  const el = document.getElementById("doc-output-text");
-  if (!el) return;
-  const btn = document.getElementById("doc-copy-btn");
-  navigator.clipboard.writeText(el.innerText || el.textContent);
-  if (btn) { btn.textContent = "✓ COPIED"; setTimeout(()=>btn.textContent="⎘ COPY ALL",2000); }
+const el = document.getElementById(“doc-output-text”);
+if (!el) return;
+const btn = document.getElementById(“doc-copy-btn”);
+navigator.clipboard.writeText(el.innerText || el.textContent);
+if (btn) { btn.textContent = “✓ COPIED”; setTimeout(()=>btn.textContent=“⎘ COPY ALL”,2000); }
 }
 
 /* ════════════════════════════════════════════
-   SETTINGS
+SETTINGS
 ════════════════════════════════════════════ */
 function renderSettings() {
-    document.getElementById("tab-settings").innerHTML = `
-    <div class="lbl acc">// SETTINGS</div>
-    <div class="section-title">Platform Settings</div>
-    <div class="flex-col gap12" style="max-width:560px;margin-top:20px">
-      <div class="card">
-        <div class="lbl acc" style="margin-bottom:12px">// ANTHROPIC API KEY</div>
-        <div style="font-size:11px;color:var(--td);margin-bottom:12px;line-height:1.7">
-          Required for AI features. Get your key at console.anthropic.com.<br>
-          Stored locally on this device only — never sent anywhere except Anthropic's API.
-        </div>
-        <div style="font-size:10px;color:var(--grn)">✓ Secure — key lives on server only</div>
-      </div>
-      <div class="card">
-        <div class="lbl acc" style="margin-bottom:12px">// ACCESS PASSWORD</div>
-        <div style="font-size:11px;color:var(--td);margin-bottom:8px;line-height:1.7">
-          Password is set via the <span style="color:var(--acc)">WEBSITE_PW</span> environment variable in your Netlify site settings.
-        </div>
-        <div style="font-size:10px;color:var(--td)">Netlify dashboard → Site → Environment variables → WEBSITE_PW → update value.</div>
-      </div>
-      <div class="card">
-        <div class="lbl acc" style="margin-bottom:12px">// DATA MANAGEMENT</div>
-        <div style="font-size:11px;color:var(--td);margin-bottom:12px">
-          Target data and pipeline stages are saved in your browser's localStorage.
-        </div>
-        <button class="btn red" onclick="clearAllData()">✕ CLEAR ALL DATA</button>
-      </div>
-    </div>`;
+document.getElementById(“tab-settings”).innerHTML = ` <div class="lbl acc">// SETTINGS</div> <div class="section-title">Platform Settings</div> <div class="flex-col gap12" style="max-width:560px;margin-top:20px"> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// ANTHROPIC API KEY</div> <div style="font-size:11px;color:var(--td);margin-bottom:12px;line-height:1.7"> Required for AI features. Get your key at console.anthropic.com.<br> Stored locally on this device only — never sent anywhere except Anthropic's API. </div> <div style="font-size:10px;color:var(--grn)">✓ Secure — key lives on server only</div> </div> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// ACCESS PASSWORD</div> <div style="font-size:11px;color:var(--td);margin-bottom:8px;line-height:1.7"> Password is set via the <span style="color:var(--acc)">WEBSITE_PW</span> environment variable in your Netlify site settings. </div> <div style="font-size:10px;color:var(--td)">Netlify dashboard → Site → Environment variables → WEBSITE_PW → update value.</div> </div> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// DATA MANAGEMENT</div> <div style="font-size:11px;color:var(--td);margin-bottom:12px"> Target data and pipeline stages are saved in your browser's localStorage. </div> <button class="btn red" onclick="clearAllData()">✕ CLEAR ALL DATA</button> </div> </div>`;
 }
 
 function clearAllData() {
-  if (window.confirm("Clear all data? Targets reset to defaults. Cannot be undone.")) {
-    localStorage.removeItem("rs-targets-v4");
-    loadTargets();
-    renderAll();
-  }
+if (window.confirm(“Clear all data? Targets reset to defaults. Cannot be undone.”)) {
+localStorage.removeItem(“rs-targets-v4”);
+loadTargets();
+renderAll();
+}
 }
 
 /* ════════════════════════════════════════════
-   UTILITY
+UTILITY
 ════════════════════════════════════════════ */
 function copyText(sourceId, btnId, copiedLabel, defaultLabel) {
-  const el  = document.getElementById(sourceId);
-  const btn = document.getElementById(btnId);
-  if (!el || !btn) return;
-  navigator.clipboard.writeText(el.innerText || el.textContent);
-  btn.textContent = copiedLabel;
-  setTimeout(()=>btn.textContent=defaultLabel, 2000);
+const el  = document.getElementById(sourceId);
+const btn = document.getElementById(btnId);
+if (!el || !btn) return;
+navigator.clipboard.writeText(el.innerText || el.textContent);
+btn.textContent = copiedLabel;
+setTimeout(()=>btn.textContent=defaultLabel, 2000);
+}
+
+// Auto-launch if already authed — runs after all functions are defined
+if (sessionStorage.getItem(“rs-auth”) === “1”) {
+launchApp();
 }
 </script>
+
 </body>
 </html>
