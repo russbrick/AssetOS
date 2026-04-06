@@ -166,7 +166,7 @@ textarea{width:100%;background:var(–s2);border:1px solid var(–bd);color:var(
     <div class="gate-title">SECURE ACCESS</div>
     <div class="gate-sub">Team members only</div>
     <input class="gate-in" type="password" id="pw-input" placeholder="Enter password" autocomplete="current-password" />
-    <button class="gate-btn" onclick="(async()=>{const v=document.getElementById('pw-input').value;if(!v)return;this.textContent='CHECKING...';this.disabled=true;try{const r=await fetch('/.netlify/functions/check-pw',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:v})});const d=await r.json();if(d.ok){sessionStorage.setItem('rs-auth','1');document.getElementById('gate-pw').style.display='none';launchApp();}else{document.getElementById('pw-err').style.display='block';document.getElementById('pw-input').value='';this.textContent='ENTER THE PLATFORM →';this.disabled=false;}}catch(e){document.getElementById('pw-err').textContent='Error: '+e.message;document.getElementById('pw-err').style.display='block';this.textContent='ENTER THE PLATFORM →';this.disabled=false;}})()">ENTER THE PLATFORM →</button>
+    <button class="gate-btn" onclick="checkPw()">ENTER THE PLATFORM →</button>
     <div id="pw-err" class="gate-err" style="display:none">Incorrect password</div>
     <div class="gate-hint">Contact Russ for access</div>
   </div>
@@ -324,15 +324,17 @@ async function callClaude(system, user) {
 /* ════════════════════════════════════════════
    GATE
 ════════════════════════════════════════════ */
-
 async function checkPw() {
   const val = document.getElementById("pw-input").value;
+  if (!val) return;
   const btn = document.querySelector("#gate-pw .gate-btn");
+  const errEl = document.getElementById("pw-err");
   btn.textContent = "CHECKING...";
   btn.disabled = true;
+  errEl.style.display = "none";
 
   try {
-    const res  = await fetch("/.netlify/functions/check-pw", {
+    const res = await fetch("/.netlify/functions/check-pw", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password: val })
@@ -340,283 +342,156 @@ async function checkPw() {
     const data = await res.json();
 
     if (data.ok) {
-      sessionStorage.setItem("rs-auth","1");
+      sessionStorage.setItem("rs-auth", "1");
       document.getElementById("gate-pw").style.display = "none";
       launchApp();
     } else {
-      document.getElementById("pw-err").style.display = "block";
+      errEl.textContent = data.error || "Incorrect password";
+      errEl.style.display = "block";
       document.getElementById("pw-input").value = "";
       btn.textContent = "ENTER THE PLATFORM →";
       btn.disabled = false;
     }
   } catch (e) {
-    document.getElementById("pw-err").textContent = "Connection error — try again";
-    document.getElementById("pw-err").style.display = "block";
+    errEl.textContent = "Network error — are you on the deployed site?";
+    errEl.style.display = "block";
     btn.textContent = "ENTER THE PLATFORM →";
     btn.disabled = false;
   }
 }
 
-  document.getElementById("pw-input").addEventListener("keydown", e => { if (e.key==="Enter") checkPw(); });
+document.getElementById("pw-input").addEventListener("keydown", e => { if (e.key === "Enter") checkPw(); });
+
 
 function launchApp() {
-  document.getElementById("gate").style.display = "none";
-  document.getElementById("app").style.display = "block";
-  loadTargets();
-  initNav();
-  renderAll();
+  try {
+    document.getElementById("gate").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    loadTargets();
+    initNav();
+    renderAll();
+  } catch(e) {
+    document.body.innerHTML = '<div style="padding:40px;font-family:monospace;color:#EF4444;background:#0F1410;min-height:100vh"><h2>Launch Error</h2><pre style="margin-top:20px;white-space:pre-wrap">'+e.message+'\n\n'+e.stack+'</pre></div>';
+
+}
 }
 
-
-
 /* ════════════════════════════════════════════
-   NAV
+NAV
 ════════════════════════════════════════════ */
 const TABS = [
-  {id:"dashboard",label:"DASHBOARD"},
-  {id:"targets",  label:"TARGETS"},
-  {id:"outreach", label:"OUTREACH"},
-  {id:"valuation",label:"VALUATION"},
-  {id:"buyers",   label:"BUYERS"},
-  {id:"pipeline", label:"PIPELINE"},
-  {id:"docs",     label:"DOCUMENTS"},
-  {id:"settings", label:"SETTINGS"},
+{id:“dashboard”,label:“DASHBOARD”},
+{id:“targets”,  label:“TARGETS”},
+{id:“outreach”, label:“OUTREACH”},
+{id:“valuation”,label:“VALUATION”},
+{id:“buyers”,   label:“BUYERS”},
+{id:“pipeline”, label:“PIPELINE”},
+{id:“docs”,     label:“DOCUMENTS”},
+{id:“settings”, label:“SETTINGS”},
 ];
 
 function initNav() {
-  const nav = document.getElementById("nav-tabs");
-  nav.innerHTML = TABS.map(t =>
-    `<button class="nav-tab ${t.id===state.tab?"active":""}" onclick="switchTab('${t.id}')">${t.label}</button>`
-  ).join("");
+const nav = document.getElementById(“nav-tabs”);
+nav.innerHTML = TABS.map(t =>
+`<button class="nav-tab ${t.id===state.tab?"active":""}" onclick="switchTab('${t.id}')">${t.label}</button>`
+).join(””);
 }
 
 function switchTab(id) {
-  state.tab = id;
-  document.querySelectorAll(".nav-tab").forEach(b => b.classList.toggle("active", b.textContent===TABS.find(t=>t.id===id)?.label));
-  document.querySelectorAll(".tab-pane").forEach(p => p.classList.toggle("active", p.id==="tab-"+id));
-  renderAll();
+state.tab = id;
+document.querySelectorAll(”.nav-tab”).forEach(b => b.classList.toggle(“active”, b.textContent===TABS.find(t=>t.id===id)?.label));
+document.querySelectorAll(”.tab-pane”).forEach(p => p.classList.toggle(“active”, p.id===“tab-”+id));
+renderAll();
 }
 
 function updateNavStatus() {
-  const pipeline = state.targets.filter(t=>t.stage!=="Prospecting"&&t.stage!=="Closed").reduce((s,t)=>s+t.high,0);
-  const pv = document.getElementById("pipeline-val");
-  pv.style.display = pipeline>0 ? "" : "none";
-  pv.textContent = fmt(pipeline)+" pipeline";
+const pipeline = state.targets.filter(t=>t.stage!==“Prospecting”&&t.stage!==“Closed”).reduce((s,t)=>s+t.high,0);
+const pv = document.getElementById(“pipeline-val”);
+pv.style.display = pipeline>0 ? “” : “none”;
+pv.textContent = fmt(pipeline)+” pipeline”;
 
 }
 
 /* ════════════════════════════════════════════
-   RENDER ALL
+RENDER ALL
 ════════════════════════════════════════════ */
 function renderAll() {
-  updateNavStatus();
-  renderDashboard();
-  renderTargets();
-  renderOutreach();
-  renderValuation();
-  renderBuyers();
-  renderPipeline();
-  renderDocs();
-  renderSettings();
+updateNavStatus();
+renderDashboard();
+renderTargets();
+renderOutreach();
+renderValuation();
+renderBuyers();
+renderPipeline();
+renderDocs();
+renderSettings();
 }
 
 /* ════════════════════════════════════════════
-   DASHBOARD
+DASHBOARD
 ════════════════════════════════════════════ */
 function renderDashboard() {
-  const t = state.targets;
-  const totalLow  = t.reduce((s,x)=>s+x.low,  0);
-  const totalHigh = t.reduce((s,x)=>s+x.high, 0);
-  const critical  = t.filter(x=>x.priority==="critical").length;
-  const active    = t.filter(x=>x.stage!=="Prospecting"&&x.stage!=="Closed").length;
-  const closedVal = t.filter(x=>x.stage==="Closed").reduce((s,x)=>s+x.high,0);
+const t = state.targets;
+const totalLow  = t.reduce((s,x)=>s+x.low,  0);
+const totalHigh = t.reduce((s,x)=>s+x.high, 0);
+const critical  = t.filter(x=>x.priority===“critical”).length;
+const active    = t.filter(x=>x.stage!==“Prospecting”&&x.stage!==“Closed”).length;
+const closedVal = t.filter(x=>x.stage===“Closed”).reduce((s,x)=>s+x.high,0);
 
-  const statCard = (label,val,sub,color) => `
-    <div class="card" style="text-align:center">
-      <div class="lbl">${label}</div>
-      <div class="stat-val" style="color:${color||"var(--acc)"}">${val}</div>
-      ${sub?`<div class="stat-sub">${sub}</div>`:""}
-    </div>`;
+const statCard = (label,val,sub,color) => ` <div class="card" style="text-align:center"> <div class="lbl">${label}</div> <div class="stat-val" style="color:${color||"var(--acc)"}">${val}</div> ${sub?`<div class="stat-sub">${sub}</div>`:""} </div>`;
 
-  const topTargets = t.filter(x=>["critical","high"].includes(x.priority)).slice(0,5).map(x=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd)">
-      <div>
-        <div style="font-size:12px;font-weight:700">${esc(x.company)}</div>
-        <div style="font-size:9px;color:var(--td)">${esc(x.location)}</div>
-      </div>
-      <div style="text-align:right">
-        ${badge(x.priority)}
-        <div style="font-size:10px;color:var(--grn);margin-top:4px">${fmt(x.low)}-${fmt(x.high)}</div>
-      </div>
-    </div>`).join("");
+const topTargets = t.filter(x=>[“critical”,“high”].includes(x.priority)).slice(0,5).map(x=>` <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd)"> <div> <div style="font-size:12px;font-weight:700">${esc(x.company)}</div> <div style="font-size:9px;color:var(--td)">${esc(x.location)}</div> </div> <div style="text-align:right"> ${badge(x.priority)} <div style="font-size:10px;color:var(--grn);margin-top:4px">${fmt(x.low)}-${fmt(x.high)}</div> </div> </div>`).join(””);
 
-  const stageRows = STAGES.map(stage=>{
-    const count = t.filter(x=>x.stage===stage).length;
-    const pct   = Math.round((count/Math.max(t.length,1))*100);
-    return `
-      <div style="margin-bottom:10px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-          <span style="font-size:9px;color:var(--td);letter-spacing:1.5px">${stage.toUpperCase()}</span>
-          <span style="font-size:9px;color:${STAGE_CLR[stage]};font-weight:700">${count}</span>
-        </div>
-        <div class="pipe-bar"><div class="pipe-fill" style="width:${pct}%;background:${STAGE_CLR[stage]}"></div></div>
-      </div>`;
-  }).join("");
+const stageRows = STAGES.map(stage=>{
+const count = t.filter(x=>x.stage===stage).length;
+const pct   = Math.round((count/Math.max(t.length,1))*100);
+return ` <div style="margin-bottom:10px"> <div style="display:flex;justify-content:space-between;margin-bottom:4px"> <span style="font-size:9px;color:var(--td);letter-spacing:1.5px">${stage.toUpperCase()}</span> <span style="font-size:9px;color:${STAGE_CLR[stage]};font-weight:700">${count}</span> </div> <div class="pipe-bar"><div class="pipe-fill" style="width:${pct}%;background:${STAGE_CLR[stage]}"></div></div> </div>`;
+}).join(””);
 
-  const quickActions = [
-    {label:"GENERATE EMAILS", sub:"AI outreach sequences",    tab:"outreach"},
-    {label:"VALUE ASSETS",    sub:"AI recovery estimates",    tab:"valuation"},
-    {label:"MOVE DEALS",      sub:"Update pipeline stages",   tab:"pipeline"},
-    {label:"CREATE DOCS",     sub:"Agreements & assessments", tab:"docs"},
-  ].map(a=>`
-    <div class="qa" onclick="switchTab('${a.tab}')">
-      <div class="qa-label">${a.label}</div>
-      <div class="qa-sub">${a.sub}</div>
-    </div>`).join("");
+const quickActions = [
+{label:“GENERATE EMAILS”, sub:“AI outreach sequences”,    tab:“outreach”},
+{label:“VALUE ASSETS”,    sub:“AI recovery estimates”,    tab:“valuation”},
+{label:“MOVE DEALS”,      sub:“Update pipeline stages”,   tab:“pipeline”},
+{label:“CREATE DOCS”,     sub:“Agreements & assessments”, tab:“docs”},
+].map(a=>` <div class="qa" onclick="switchTab('${a.tab}')"> <div class="qa-label">${a.label}</div> <div class="qa-sub">${a.sub}</div> </div>`).join(””);
 
-  document.getElementById("tab-dashboard").innerHTML = `
-    <div style="margin-bottom:24px">
-      <div class="lbl acc">// OVERVIEW</div>
-      <div class="section-title">Pipeline Dashboard</div>
-      <div class="section-sub">South Jersey · Philadelphia Metro · Mid-Atlantic</div>
-    </div>
-    <div class="g4" style="margin-bottom:20px">
-      ${statCard("TOTAL TARGETS", t.length, "WARN Act filings")}
-      ${statCard("EST. RECOVERY", fmt(totalLow)+"-"+fmt(totalHigh), "gross across all targets","var(--grn)")}
-      ${statCard("CRITICAL", critical, "immediate action required","#EF4444")}
-      ${statCard("ACTIVE DEALS", active, "in pipeline stages","var(--yel)")}
-    </div>
-    <div class="g2" style="margin-bottom:16px">
-      <div class="card">
-        <div class="lbl acc" style="margin-bottom:12px">// TOP PRIORITY TARGETS</div>
-        ${topTargets}
-        <div style="margin-top:12px">
-          <button class="btn full" onclick="switchTab('targets')">VIEW ALL TARGETS →</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="lbl acc" style="margin-bottom:12px">// PIPELINE BY STAGE</div>
-        ${stageRows}
-        ${closedVal>0?`<div style="margin-top:12px;padding:8px 12px;background:var(--s2);border-radius:3px;border:1px solid rgba(76,175,118,.3)">
-          <div style="font-size:9px;color:var(--grn);letter-spacing:1.5px">TOTAL CLOSED</div>
-          <div style="font-size:16px;color:var(--grn);font-weight:700">${fmt(closedVal)}</div>
-          <div style="font-size:9px;color:var(--td)">fee: ${fee(closedVal)}</div>
-        </div>`:""}
-      </div>
-    </div>
-    <div class="card">
-      <div class="lbl acc" style="margin-bottom:12px">// QUICK ACTIONS</div>
-      <div class="g4">${quickActions}</div>
-    </div>`;
+document.getElementById(“tab-dashboard”).innerHTML = ` <div style="margin-bottom:24px"> <div class="lbl acc">// OVERVIEW</div> <div class="section-title">Pipeline Dashboard</div> <div class="section-sub">South Jersey · Philadelphia Metro · Mid-Atlantic</div> </div> <div class="g4" style="margin-bottom:20px"> ${statCard("TOTAL TARGETS", t.length, "WARN Act filings")} ${statCard("EST. RECOVERY", fmt(totalLow)+"-"+fmt(totalHigh), "gross across all targets","var(--grn)")} ${statCard("CRITICAL", critical, "immediate action required","#EF4444")} ${statCard("ACTIVE DEALS", active, "in pipeline stages","var(--yel)")} </div> <div class="g2" style="margin-bottom:16px"> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// TOP PRIORITY TARGETS</div> ${topTargets} <div style="margin-top:12px"> <button class="btn full" onclick="switchTab('targets')">VIEW ALL TARGETS →</button> </div> </div> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// PIPELINE BY STAGE</div> ${stageRows} ${closedVal>0?`<div style="margin-top:12px;padding:8px 12px;background:var(--s2);border-radius:3px;border:1px solid rgba(76,175,118,.3)">
+<div style="font-size:9px;color:var(--grn);letter-spacing:1.5px">TOTAL CLOSED</div>
+<div style="font-size:16px;color:var(--grn);font-weight:700">${fmt(closedVal)}</div>
+<div style="font-size:9px;color:var(--td)">fee: ${fee(closedVal)}</div>
+</div>`:""} </div> </div> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// QUICK ACTIONS</div> <div class="g4">${quickActions}</div> </div>`;
 }
 
 /* ════════════════════════════════════════════
-   TARGETS
+TARGETS
 ════════════════════════════════════════════ */
 function renderTargets() {
-  if (state.detailId) { renderTargetDetail(); return; }
+if (state.detailId) { renderTargetDetail(); return; }
 
-  const filtered = state.filterPriority === "all"
-    ? state.targets
-    : state.targets.filter(t=>t.priority===state.filterPriority);
+const filtered = state.filterPriority === “all”
+? state.targets
+: state.targets.filter(t=>t.priority===state.filterPriority);
 
-  const filterBtns = ["all","critical","high","medium"].map(f=>`
-    <button style="background:${f===state.filterPriority?"var(--adim)":"var(--s2)"};border:1px solid ${f===state.filterPriority?"var(--acc)":"var(--bd)"};color:${f===state.filterPriority?"var(--acc)":"var(--td)"};font-size:9px;font-family:var(--ff);letter-spacing:1.5px;padding:5px 10px;border-radius:2px;cursor:pointer;font-weight:700"
-      onclick="state.filterPriority='${f}';renderAll()">${f.toUpperCase()}</button>`).join("");
+const filterBtns = [“all”,“critical”,“high”,“medium”].map(f=>` <button style="background:${f===state.filterPriority?"var(--adim)":"var(--s2)"};border:1px solid ${f===state.filterPriority?"var(--acc)":"var(--bd)"};color:${f===state.filterPriority?"var(--acc)":"var(--td)"};font-size:9px;font-family:var(--ff);letter-spacing:1.5px;padding:5px 10px;border-radius:2px;cursor:pointer;font-weight:700" onclick="state.filterPriority='${f}';renderAll()">${f.toUpperCase()}</button>`).join(””);
 
-  const rows = filtered.map(t=>`
-    <div class="target-row" onclick="state.detailId=${t.id};renderAll()">
-      <div>
-        <div style="font-size:13px;font-weight:700;margin-bottom:2px">${esc(t.company)}</div>
-        <div style="font-size:10px;color:var(--td)">${esc(t.location)} — ${esc(t.industry)}</div>
-      </div>
-      <div>
-        <div class="lbl" style="margin-bottom:2px">WORKERS</div>
-        <div style="font-size:12px;color:var(--tm)">${t.workers}</div>
-      </div>
-      <div>
-        <div class="lbl" style="margin-bottom:2px">RECOVERY</div>
-        <div style="font-size:12px;color:var(--grn);font-weight:700">${fmt(t.low)}-${fmt(t.high)}</div>
-        <div style="font-size:9px;color:var(--acc)">fee: ${fee(t.high)}</div>
-      </div>
-      ${badge(t.priority)}
-      <div style="text-align:right">
-        <div style="font-size:9px;color:${STAGE_CLR[t.stage]||"var(--td)"};letter-spacing:1.5px;font-weight:700">${t.stage.toUpperCase()}</div>
-        ${t.contact?`<div style="font-size:9px;color:var(--td);margin-top:3px">${esc(t.contact)}</div>`:""}
-      </div>
-    </div>`).join("");
+const rows = filtered.map(t=>` <div class="target-row" onclick="state.detailId=${t.id};renderAll()"> <div> <div style="font-size:13px;font-weight:700;margin-bottom:2px">${esc(t.company)}</div> <div style="font-size:10px;color:var(--td)">${esc(t.location)} — ${esc(t.industry)}</div> </div> <div> <div class="lbl" style="margin-bottom:2px">WORKERS</div> <div style="font-size:12px;color:var(--tm)">${t.workers}</div> </div> <div> <div class="lbl" style="margin-bottom:2px">RECOVERY</div> <div style="font-size:12px;color:var(--grn);font-weight:700">${fmt(t.low)}-${fmt(t.high)}</div> <div style="font-size:9px;color:var(--acc)">fee: ${fee(t.high)}</div> </div> ${badge(t.priority)} <div style="text-align:right"> <div style="font-size:9px;color:${STAGE_CLR[t.stage]||"var(--td)"};letter-spacing:1.5px;font-weight:700">${t.stage.toUpperCase()}</div> ${t.contact?`<div style="font-size:9px;color:var(--td);margin-top:3px">${esc(t.contact)}</div>`:""} </div> </div>`).join(””);
 
-  document.getElementById("tab-targets").innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
-      <div>
-        <div class="lbl acc">// WARN ACT TARGETS</div>
-        <div class="section-title">Target Companies</div>
-        <div class="section-sub" style="margin-bottom:0">${state.targets.length} companies — click any to view details</div>
-      </div>
-      <div style="display:flex;gap:8px">${filterBtns}</div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:8px">${rows}</div>`;
+document.getElementById(“tab-targets”).innerHTML = ` <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px"> <div> <div class="lbl acc">// WARN ACT TARGETS</div> <div class="section-title">Target Companies</div> <div class="section-sub" style="margin-bottom:0">${state.targets.length} companies — click any to view details</div> </div> <div style="display:flex;gap:8px">${filterBtns}</div> </div> <div style="display:flex;flex-direction:column;gap:8px">${rows}</div>`;
 }
 
 function renderTargetDetail() {
-  const t = state.targets.find(x=>x.id===state.detailId);
-  if (!t) { state.detailId=null; renderTargets(); return; }
+const t = state.targets.find(x=>x.id===state.detailId);
+if (!t) { state.detailId=null; renderTargets(); return; }
 
-  const stageOpts = STAGES.map(s=>`<option value="${s}" ${s===t.stage?"selected":""}>${s}</option>`).join("");
-  const prioOpts  = Object.keys(PRIORITY_META).map(p=>`<option value="${p}" ${p===t.priority?"selected":""}>${p}</option>`).join("");
-  const assetDots = t.assets.map(a=>`
-    <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd)">
-      <div style="width:4px;height:4px;background:var(--acc);border-radius:50%;flex-shrink:0"></div>
-      <span style="font-size:11px;color:var(--tm)">${esc(a)}</span>
-    </div>`).join("");
+const stageOpts = STAGES.map(s=>`<option value="${s}" ${s===t.stage?"selected":""}>${s}</option>`).join(””);
+const prioOpts  = Object.keys(PRIORITY_META).map(p=>`<option value="${p}" ${p===t.priority?"selected":""}>${p}</option>`).join(””);
+const assetDots = t.assets.map(a=>` <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd)"> <div style="width:4px;height:4px;background:var(--acc);border-radius:50%;flex-shrink:0"></div> <span style="font-size:11px;color:var(--tm)">${esc(a)}</span> </div>`).join(””);
 
-  document.getElementById("tab-targets").innerHTML = `
-    <div style="display:flex;gap:10px;align-items:center;margin-bottom:20px">
-      <button class="btn" onclick="state.detailId=null;renderAll()">← BACK</button>
-      <div style="font-size:18px;font-weight:700">${esc(t.company)}</div>
-      ${badge(t.priority)}
-    </div>
-    <div class="g2">
-      <div class="flex-col gap12">
-        <div class="card">
-          <div class="lbl acc" style="margin-bottom:12px">// COMPANY INFO</div>
-          ${[["Location",t.location],["Industry",t.industry],["Workers",t.workers],["Date",t.date]].map(([k,v])=>`
-            <div style="display:flex;gap:12px;margin-bottom:8px;align-items:baseline">
-              <span style="font-size:9px;color:var(--td);letter-spacing:1.5px;min-width:64px">${k.toUpperCase()}</span>
-              <span style="font-size:12px">${esc(v)}</span>
-            </div>`).join("")}
-        </div>
-        <div class="card">
-          <div class="lbl acc" style="margin-bottom:12px">// RECOVERY ESTIMATE</div>
-          <div class="g2">
-            <div><div class="lbl">RANGE</div><div style="font-size:16px;color:var(--grn);font-weight:700">${fmt(t.low)}-${fmt(t.high)}</div></div>
-            <div><div class="lbl">YOUR FEE @ 12%</div><div style="font-size:16px;color:var(--acc);font-weight:700">${fee(t.low)}-${fee(t.high)}</div></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:6px">STAGE</div>
-          <select onchange="updateTarget(${t.id},'stage',this.value)">${stageOpts}</select>
-          <div class="lbl" style="margin-top:12px;margin-bottom:6px">PRIORITY</div>
-          <select onchange="updateTarget(${t.id},'priority',this.value)">${prioOpts}</select>
-          <div class="lbl" style="margin-top:12px;margin-bottom:6px">CONTACT</div>
-          <input class="inp" type="text" value="${esc(t.contact)}" placeholder="CFO name, email..." oninput="updateTarget(${t.id},'contact',this.value)" />
-        </div>
-      </div>
-      <div class="flex-col gap12">
-        <div class="card">
-          <div class="lbl acc" style="margin-bottom:12px">// ASSETS</div>
-          ${assetDots}
-        </div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:6px">NOTES</div>
-          <textarea rows="7" oninput="updateTarget(${t.id},'notes',this.value)">${esc(t.notes)}</textarea>
-
-```
-    </div>
-  </div>
-</div>`;
-```
-
+document.getElementById(“tab-targets”).innerHTML = ` <div style="display:flex;gap:10px;align-items:center;margin-bottom:20px"> <button class="btn" onclick="state.detailId=null;renderAll()">← BACK</button> <div style="font-size:18px;font-weight:700">${esc(t.company)}</div> ${badge(t.priority)} </div> <div class="g2"> <div class="flex-col gap12"> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// COMPANY INFO</div> ${[["Location",t.location],["Industry",t.industry],["Workers",t.workers],["Date",t.date]].map(([k,v])=>`
+<div style="display:flex;gap:12px;margin-bottom:8px;align-items:baseline">
+<span style="font-size:9px;color:var(--td);letter-spacing:1.5px;min-width:64px">${k.toUpperCase()}</span>
+<span style="font-size:12px">${esc(v)}</span>
+</div>`).join("")} </div> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// RECOVERY ESTIMATE</div> <div class="g2"> <div><div class="lbl">RANGE</div><div style="font-size:16px;color:var(--grn);font-weight:700">${fmt(t.low)}-${fmt(t.high)}</div></div> <div><div class="lbl">YOUR FEE @ 12%</div><div style="font-size:16px;color:var(--acc);font-weight:700">${fee(t.low)}-${fee(t.high)}</div></div> </div> </div> <div class="card"> <div class="lbl" style="margin-bottom:6px">STAGE</div> <select onchange="updateTarget(${t.id},'stage',this.value)">${stageOpts}</select> <div class="lbl" style="margin-top:12px;margin-bottom:6px">PRIORITY</div> <select onchange="updateTarget(${t.id},'priority',this.value)">${prioOpts}</select> <div class="lbl" style="margin-top:12px;margin-bottom:6px">CONTACT</div> <input class="inp" type="text" value="${esc(t.contact)}" placeholder="CFO name, email..." oninput="updateTarget(${t.id},'contact',this.value)" /> </div> </div> <div class="flex-col gap12"> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// ASSETS</div> ${assetDots} </div> <div class="card"> <div class="lbl" style="margin-bottom:6px">NOTES</div> <textarea rows="7" oninput="updateTarget(${t.id},'notes',this.value)">${esc(t.notes)}</textarea> </div> </div> </div>`;
 }
 
 function updateTarget(id, key, val) {
@@ -950,7 +825,7 @@ if (btn) { btn.textContent = “✓ COPIED”; setTimeout(()=>btn.textContent=�
 SETTINGS
 ════════════════════════════════════════════ */
 function renderSettings() {
-document.getElementById(“tab-settings”).innerHTML = ` <div class="lbl acc">// SETTINGS</div> <div class="section-title">Platform Settings</div> <div class="flex-col gap12" style="max-width:560px;margin-top:20px"> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// ANTHROPIC API KEY</div> <div style="font-size:11px;color:var(--td);margin-bottom:12px;line-height:1.7"> Required for AI features. Get your key at console.anthropic.com.<br> Stored locally on this device only — never sent anywhere except Anthropic's API. </div> <div style="font-size:10px;color:var(--grn)">✓ Secure — key lives on server only</div> </div> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// ACCESS PASSWORD</div> <div style="font-size:11px;color:var(--td);margin-bottom:8px;line-height:1.7"> Password is set via the <span style="color:var(--acc)">WEBSITE_PW</span> environment variable in your Netlify site settings. </div> <div style="font-size:10px;color:var(--td)">Netlify dashboard → Site → Environment variables → WEBSITE_PW → update value.</div> </div> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// DATA MANAGEMENT</div> <div style="font-size:11px;color:var(--td);margin-bottom:12px"> Target data and pipeline stages are saved in your browser's localStorage. </div> <button class="btn red" onclick="clearAllData()">✕ CLEAR ALL DATA</button> </div> </div>`;
+document.getElementById(“tab-settings”).innerHTML = ` <div class="lbl acc">// SETTINGS</div> <div class="section-title">Platform Settings</div> <div class="flex-col gap12" style="max-width:560px;margin-top:20px"> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// ANTHROPIC API KEY</div> <div style="font-size:11px;color:var(--td);margin-bottom:12px;line-height:1.7"> Required for AI features. Get your key at console.anthropic.com.<br> Stored locally on this device only — never sent anywhere except Anthropic's API. </div> <div style="font-size:10px;color:var(--grn)">✓ Secure — key lives on server only</div> </div> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// ACCESS PASSWORD</div> <div style="font-size:11px;color:var(--td);margin-bottom:8px;line-height:1.7"> Password is set in the <span style="color:var(--acc)">PASS</span> constant at the top of index.html. Current value: <span style="color:var(--acc)">reclaim2026</span>. To change: edit the file and redeploy.</div> </div> <div class="card"> <div class="lbl acc" style="margin-bottom:12px">// DATA MANAGEMENT</div> <div style="font-size:11px;color:var(--td);margin-bottom:12px"> Target data and pipeline stages are saved in your browser's localStorage. </div> <button class="btn red" onclick="clearAllData()">✕ CLEAR ALL DATA</button> </div> </div>`;
 }
 
 function clearAllData() {
