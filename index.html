@@ -1,71 +1,461 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ASSET OS</title>
+<title>ASSET OS - Reclaim Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,900&family=IBM+Plex+Mono:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#0F1410;color:#E8EDE4;font-family:'IBM Plex Mono',monospace;min-height:100vh}
-#gate{display:flex;min-height:100vh;align-items:center;justify-content:center}
-#app{display:none;padding:40px}
-.box{background:#1A2118;border:1px solid #2A3828;border-radius:6px;padding:48px;width:420px;text-align:center}
-input{width:100%;background:#0F1410;border:1px solid #2A3828;color:#E8EDE4;padding:14px;font-size:13px;font-family:'IBM Plex Mono',monospace;border-radius:3px;outline:none;margin-bottom:12px;text-align:center;display:block}
-button{width:100%;background:#1E5C3A;color:#fff;border:none;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2px;padding:14px;border-radius:3px;cursor:pointer}
-#err{color:#EF4444;font-size:11px;margin-top:10px;display:none}
+:root{
+  --bg:#0F1410;--s1:#1A2118;--s2:#1F2A1D;--s3:#253024;
+  --bd:#2A3828;--acc:#2D7A50;--acl:#4A9B6E;--adim:rgba(45,122,80,0.1);
+  --tx:#E8EDE4;--tm:#B8C8B0;--td:#6A7A68;
+  --grn:#4CAF76;--red:#EF4444;--yel:#F59E0B;
+  --ff:'IBM Plex Mono',monospace;
+}
+body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--s1)}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+#app{display:none}
+#gate{display:flex;min-height:100vh;align-items:center;justify-content:center;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(45,122,80,.08),transparent 70%)}
+.gate-box{background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:48px;width:100%;max-width:420px;text-align:center;animation:fadeUp .3s ease both}
+.gate-err{font-size:10px;color:var(--red);margin-top:10px;letter-spacing:1px}
+input.gi{width:100%;background:var(--bg);border:1px solid var(--bd);color:var(--tx);padding:14px;font-size:13px;font-family:var(--ff);border-radius:3px;outline:none;margin-bottom:12px;letter-spacing:1px;text-align:center;transition:border-color .2s;display:block}
+input.gi:focus{border-color:var(--acc)}
+input.gi::placeholder{color:#3A4A38}
+button.gb{width:100%;background:#1E5C3A;color:#fff;border:none;font-family:var(--ff);font-size:11px;font-weight:700;letter-spacing:2px;padding:14px;border-radius:3px;cursor:pointer;transition:background .15s}
+button.gb:hover{background:var(--acc)}
+#nav{background:var(--s1);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 20px;height:52px;position:sticky;top:0;z-index:100}
+.ntab{background:none;border:none;cursor:pointer;padding:0 14px;height:52px;display:flex;align-items:center;font-size:9px;font-family:var(--ff);font-weight:700;letter-spacing:1.5px;color:var(--td);border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.ntab.on{color:var(--acc);border-bottom-color:var(--acc)}
+#content{padding:28px 24px;max-width:1440px;margin:0 auto}
+.pane{display:none}.pane.on{display:block;animation:fadeUp .25s ease both}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:4px;padding:16px}
+.lbl{font-size:9px;color:var(--td);letter-spacing:2px;font-weight:700;margin-bottom:8px}
+.lbl.ac{color:var(--acc)}
+.ttl{font-size:22px;font-weight:700;margin-bottom:4px}
+.sub{font-size:11px;color:var(--td);margin-bottom:20px;margin-top:3px}
+.btn{display:inline-flex;align-items:center;gap:5px;font-family:var(--ff);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:9px 16px;border-radius:3px;cursor:pointer;border:1px solid var(--acc);background:var(--adim);color:var(--acc);transition:all .15s}
+.btn:disabled{background:var(--s3);border-color:var(--bd);color:var(--td);cursor:not-allowed}
+.btn.sm{font-size:9px;padding:4px 10px}
+.btn.full{width:100%;justify-content:center}
+.btn.g{border-color:var(--grn);background:rgba(76,175,118,0.1);color:var(--grn)}
+.btn.r{border-color:var(--red);background:rgba(239,68,68,0.1);color:var(--red)}
+.btn.m{border-color:var(--td);background:transparent;color:var(--td)}
+input.inp{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:7px 10px;font-size:11px;font-family:var(--ff);border-radius:3px;outline:none}
+select{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:7px 10px;font-size:11px;font-family:var(--ff);border-radius:3px;outline:none;cursor:pointer}
+select option{background:var(--s2)}
+textarea{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:8px 10px;font-size:11px;font-family:var(--ff);border-radius:3px;outline:none;resize:vertical;line-height:1.7}
+.badge{display:inline-block;font-size:8px;font-weight:700;letter-spacing:1.5px;padding:2px 7px;border-radius:2px}
+.badge.critical{color:#EF4444;background:#EF444418}
+.badge.high{color:#F59E0B;background:#F59E0B18}
+.badge.medium{color:#3B82F6;background:#3B82F618}
+.badge.low{color:#6B7280;background:#6B728018}
+.spin{display:inline-block;width:10px;height:10px;border:2px solid rgba(45,122,80,.3);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.trow{background:var(--s1);border:1px solid var(--bd);border-radius:4px;padding:14px 16px;cursor:pointer;display:grid;grid-template-columns:2fr 1fr 1fr 100px 130px;gap:12px;align-items:center;transition:border-color .15s}
+.trow:hover{border-color:var(--acc)}
+.pbar{height:3px;background:var(--s2);border-radius:2px;margin-top:4px}
+.pfill{height:3px;border-radius:2px}
+.qa{background:var(--s2);border:1px solid var(--bd);border-radius:3px;padding:14px;cursor:pointer;transition:border-color .15s}
+.qa:hover{border-color:var(--acc)}
+.bkhd{display:grid;grid-template-columns:2fr 50px 1.2fr 1.2fr 80px 1fr;padding:7px 14px;border-bottom:1px solid var(--bd)}
+.bkrow{display:grid;grid-template-columns:2fr 50px 1.2fr 1.2fr 80px 1fr;padding:10px 14px;border-bottom:1px solid var(--bd);align-items:center}
+.warn{background:#F59E0B18;border:1px solid rgba(245,158,11,.4);border-radius:3px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:#F59E0B}
+.dtopt{padding:10px 12px;cursor:pointer;border-radius:3px;margin-bottom:4px;border:1px solid var(--bd);background:var(--s2);transition:all .1s}
+.dtopt.on{background:var(--adim);border-color:var(--acc)}
+.live{width:6px;height:6px;background:var(--grn);border-radius:50%;animation:pulse 2s infinite}
 </style>
 </head>
 <body>
 
 <div id="gate">
-  <div class="box">
-    <div style="font-size:20px;font-weight:700;margin-bottom:24px;color:#2D7A50">ASSET OS</div>
-    <div style="font-size:11px;color:#6A7A68;margin-bottom:24px">Reclaim Solutions — Internal Platform</div>
-    <input type="password" id="pw" placeholder="Enter password" />
-    <button id="btn">ENTER THE PLATFORM</button>
-    <div id="err"></div>
+  <div class="gate-box">
+    <div style="margin-bottom:32px">
+      <div style="display:flex;align-items:baseline;justify-content:center">
+        <span style="font-family:'Playfair Display',serif;font-style:italic;font-weight:900;font-size:28px;color:var(--acc);letter-spacing:-1.5px">R</span>
+        <span style="font-family:'Playfair Display',serif;font-weight:700;font-size:28px;color:var(--tx);letter-spacing:-.5px">eclaim</span>
+        <div style="width:1.5px;height:22px;background:var(--acc);opacity:.3;margin:0 10px;display:inline-block;vertical-align:middle"></div>
+        <div style="display:inline-flex;flex-direction:column;vertical-align:middle">
+          <span style="font-size:8px;font-weight:300;letter-spacing:3.5px;color:var(--acl);text-transform:uppercase">Solutions</span>
+          <span style="font-size:7px;letter-spacing:2px;color:var(--td);margin-top:2px">ASSET OS</span>
+        </div>
+      </div>
+      <div style="margin-top:12px;font-size:9px;color:var(--td);letter-spacing:3px">INTERNAL OPERATIONS PLATFORM</div>
+    </div>
+    <div style="font-size:13px;color:#A8B8A0;letter-spacing:3px;margin-bottom:8px">SECURE ACCESS</div>
+    <div style="font-size:11px;color:#5A6A58;letter-spacing:1px;margin-bottom:32px">Team members only</div>
+    <input class="gi" type="password" id="pw" placeholder="Enter password" />
+    <button class="gb" id="pwbtn">ENTER THE PLATFORM</button>
+    <div id="pwerr" class="gate-err" style="display:none"></div>
+    <div style="font-size:9px;color:#3A4A38;margin-top:20px;letter-spacing:1px">Contact Russ for access</div>
   </div>
 </div>
 
 <div id="app">
-  <div style="font-size:22px;font-weight:700;margin-bottom:8px">Pipeline Dashboard</div>
-  <div style="font-size:11px;color:#6A7A68">App loaded successfully</div>
+  <div id="nav">
+    <div style="display:flex;align-items:baseline;margin-right:28px;flex-shrink:0">
+      <span style="font-family:'Playfair Display',serif;font-style:italic;font-weight:900;font-size:20px;color:var(--acc);letter-spacing:-1px">R</span>
+      <span style="font-family:'Playfair Display',serif;font-weight:700;font-size:20px;color:var(--tx);letter-spacing:-.5px">eclaim</span>
+      <div style="width:1.5px;height:18px;background:var(--acc);opacity:.3;margin:0 9px"></div>
+      <div style="display:flex;flex-direction:column">
+        <span style="font-size:7px;font-weight:300;letter-spacing:3px;color:var(--acl);text-transform:uppercase">Solutions</span>
+        <span style="font-size:6px;letter-spacing:1.5px;color:var(--td);margin-top:2px">ASSET OS</span>
+      </div>
+    </div>
+    <div id="navtabs" style="display:flex;flex:1;overflow-x:auto"></div>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:16px;font-size:9px">
+      <span id="pipeval" style="color:var(--acc);display:none"></span>
+      <span class="live"></span>
+      <span style="color:var(--grn);letter-spacing:1.5px">LIVE</span>
+    </div>
+  </div>
+  <div id="content">
+    <div id="p-dashboard" class="pane on"></div>
+    <div id="p-targets"   class="pane"></div>
+    <div id="p-outreach"  class="pane"></div>
+    <div id="p-valuation" class="pane"></div>
+    <div id="p-buyers"    class="pane"></div>
+    <div id="p-pipeline"  class="pane"></div>
+    <div id="p-docs"      class="pane"></div>
+    <div id="p-settings"  class="pane"></div>
+  </div>
 </div>
 
 <script>
-document.getElementById('btn').addEventListener('click', function() {
-  var pw = document.getElementById('pw').value;
+var STAGES = ['Prospecting','Assessment','Agreement','Marketing','Negotiation','Closed'];
+var SCLR = {Prospecting:'#505050',Assessment:'#3B82F6',Agreement:'#F59E0B',Marketing:'#8B5CF6',Negotiation:'#F97316',Closed:'#4CAF76'};
+var PMETA = {
+  critical:{label:'CRITICAL',fg:'#EF4444',bg:'#EF444418'},
+  high:    {label:'HIGH',    fg:'#F59E0B',bg:'#F59E0B18'},
+  medium:  {label:'MEDIUM',  fg:'#3B82F6',bg:'#3B82F618'},
+  low:     {label:'LOW',     fg:'#6B7280',bg:'#6B728018'}
+};
+var TABS = [
+  {id:'dashboard',label:'DASHBOARD'},
+  {id:'targets',  label:'TARGETS'},
+  {id:'outreach', label:'OUTREACH'},
+  {id:'valuation',label:'VALUATION'},
+  {id:'buyers',   label:'BUYERS'},
+  {id:'pipeline', label:'PIPELINE'},
+  {id:'docs',     label:'DOCUMENTS'},
+  {id:'settings', label:'SETTINGS'}
+];
+var DEFAULT_TARGETS = [
+  {id:1,company:'KRP Transport',location:'Burlington, NJ',industry:'Transportation / Logistics',workers:298,date:'Sep 2025',assets:['Semi Trucks (50+)','Trailers','Forklifts','Dock Equipment','GPS/Telematics Systems','Fuel Tanks'],low:2000000,high:5000000,priority:'critical',stage:'Prospecting',contact:'',notes:'Full transport shutdown. Fleet liquidation - 50 trucks avg $60K = $3M. Move immediately.'},
+  {id:2,company:'TransAxle',location:'Cinnaminson, NJ',industry:'Auto Parts Manufacturing',workers:200,date:'Aug-Sep 2025',assets:['Assembly Equipment','Hydraulic Presses','Conveyor Systems','Parts Inventory','Warehouse Racking','Tooling & Dies'],low:300000,high:800000,priority:'critical',stage:'Prospecting',contact:'Marty Halle (CFO)',notes:'Complete manufacturing shutdown. Auto parts equipment sells well in Mexico and Eastern Europe.'},
+  {id:3,company:'Barrette Outdoor Living',location:'Egg Harbor City, NJ',industry:'Outdoor Products Mfg',workers:120,date:'Jul 2025',assets:['Extrusion Equipment','Molds & Dies','Vinyl Processing Machinery','Raw Material Inventory','Warehouse Racking'],low:200000,high:600000,priority:'high',stage:'Prospecting',contact:'',notes:'Molds and dies worth $50-200K. Strong international demand for extrusion equipment.'},
+  {id:4,company:'Seviroli Foods',location:'Bellmawr, NJ',industry:'Food Manufacturing',workers:77,date:'Aug 2025',assets:['Food Processing Equipment','Packaging Lines','Stainless Steel Tanks','Refrigeration Units','Conveyor Systems'],low:150000,high:400000,priority:'high',stage:'Prospecting',contact:'Paul Vertullo (CEO)',notes:'SS food processing in strong international demand - Latin America, SE Asia especially.'},
+  {id:5,company:'Alstom Transportation',location:'Camden, NJ',industry:'Rail & Transit Equipment',workers:117,date:'Feb 2025',assets:['Rail Maintenance Equipment','Diagnostic Tools','Vehicle Components','Workshop Machinery','Specialized Tooling'],low:200000,high:500000,priority:'high',stage:'Prospecting',contact:'',notes:'Specialized buyer pool - transit authorities and rail contractors.'},
+  {id:6,company:'Pioneer Credit Recovery',location:'Burlington, NJ',industry:'Financial Services',workers:180,date:'Mar 2026',assets:['Servers & Networking','Workstations (180)','Call Center Equipment','Office Furniture','Filing Systems'],low:50000,high:150000,priority:'medium',stage:'Prospecting',contact:'',notes:'Filed Dec 2025 - window open NOW. 180 workstations + server infrastructure.'},
+  {id:7,company:'Jefferson Health',location:'Cherry Hill, NJ',industry:'Healthcare',workers:108,date:'Jan 2026',assets:['Medical Equipment','Diagnostic Tools','IT Infrastructure','Exam Furniture','Lab Equipment'],low:75000,high:200000,priority:'medium',stage:'Prospecting',contact:'',notes:'Package with HIPAA data destruction as bundled service.'},
+  {id:8,company:'Ready Pac Produce',location:'Florence, NJ',industry:'Food Processing',workers:75,date:'Apr 2025',assets:['Cold Storage Units','Packaging Equipment','Processing Lines','Refrigerated Fleet','Warehouse Racking'],low:100000,high:300000,priority:'medium',stage:'Prospecting',contact:'',notes:'Cold chain equipment in high domestic demand. Refrigerated fleet sells in days.'},
+  {id:9,company:'Iron Hill Brewery',location:'Maple Shade, NJ',industry:'Food & Beverage',workers:108,date:'Sep-Oct 2025',assets:['Fermentation Tanks','Kegging Lines','Refrigeration Systems','Draft Systems','Restaurant Equipment'],low:80000,high:220000,priority:'medium',stage:'Prospecting',contact:'',notes:'Active craft brewery secondary market. Fermentation tanks sell in days.'},
+  {id:10,company:'TTEC Government Solutions',location:'Egg Harbor, NJ',industry:'Government / Call Center',workers:120,date:'Jan 2026',assets:['Workstations (120)','Servers','Networking Equipment','Headsets & AV','Office Furniture'],low:40000,high:120000,priority:'medium',stage:'Prospecting',contact:'',notes:'120-seat call center. ITAD brokers will buy the lot outright within a week.'}
+];
+var BUYERS = [
+  {name:'IronPlanet',cat:'Industrial Equipment',url:'ironplanet.com',min:'$50K+',note:'Global marketplace for heavy equipment.'},
+  {name:'Ritchie Bros.',cat:'Industrial Equipment',url:'rbauction.com',min:'$100K+',note:"World's largest industrial auctioneer."},
+  {name:'Machinio',cat:'Manufacturing Machinery',url:'machinio.com',min:'$10K+',note:'Search engine for used machinery. Huge international buyer base.'},
+  {name:'CommercialTruckTrader',cat:'Commercial Vehicles',url:'commercialtrucktrader.com',min:'$20K+',note:'Largest US marketplace for commercial trucks.'},
+  {name:'TruckPaper',cat:'Commercial Vehicles',url:'truckpaper.com',min:'$15K+',note:'Heavy truck classifieds. Strong broker network.'},
+  {name:'Aucto',cat:'Food Processing Equipment',url:'aucto.com',min:'$25K+',note:'Industrial and food equipment auctions. 40+ countries.'},
+  {name:'ProBrewery Equipment',cat:'Brewery Equipment',url:'probrewery.com',min:'$5K+',note:'Used brewing equipment marketplace.'},
+  {name:'Radwell International',cat:'Industrial Electronics',url:'radwell.com',min:'$10K+',note:'PLCs, drives, electronics. Will buy outright.'},
+  {name:'Surplus City Liquidators',cat:'Office / IT Equipment',url:'surpluscity.com',min:'$5K+',note:'Office furniture, electronics, IT liquidation.'},
+  {name:'BioMedical Equipment Trader',cat:'Medical Equipment',url:'biomed.com',min:'$10K+',note:'Hospital equipment remarketing network.'},
+  {name:'Santek Industries',cat:'Rail / Specialty Equipment',url:'santekindustries.com',min:'$50K+',note:'Specialized industrial and rail equipment buyers.'},
+  {name:'Excess Logic',cat:'Office / IT Equipment',url:'excesslogic.com',min:'$10K+',note:'ITAD and IT asset liquidation. Takes entire lots.'}
+];
+var ASSET_CATS = ['Manufacturing Equipment','Commercial Vehicles','Food Processing Equipment','IT Hardware','Office Furniture','Medical Equipment','Brewery Equipment','Warehouse Equipment','Raw Materials / Inventory','Rail & Specialty Equipment','Other'];
+var CONDITIONS = ['Excellent','Good','Fair','Poor'];
+var DOC_TYPES = [
+  {id:'capability',label:'CAPABILITY STATEMENT',desc:'One-pager for cold outreach'},
+  {id:'agreement', label:'FEE AGREEMENT',       desc:'12% success fee contract'},
+  {id:'assessment',label:'RECOVERY ASSESSMENT', desc:'CFO-ready asset report'},
+  {id:'intro',     label:'INTRO EMAIL',         desc:'First-touch personalized email'}
+];
+
+var S = {
+  tab:'dashboard',targets:[],detailId:null,filterP:'all',
+  oeId:'',oeEmails:[],oeLoading:false,oeErr:'',
+  valItems:[{cat:'',desc:'',qty:1,year:'',cond:'Good'}],valTId:'',valResult:null,valLoading:false,valErr:'',
+  docType:'capability',docTId:'',docName:'Russ Brick',docCo:'Reclaim Solutions',docText:'',docLoading:false,docErr:''
+};
+
+function fmt(n){return n>=1000000?'$'+(n/1000000).toFixed(1)+'M':n>=1000?'$'+Math.round(n/1000)+'K':'$'+n;}
+function fee(n){return fmt(Math.round(n*0.12));}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function bdg(p){var m=PMETA[p]||PMETA.low;return '<span class="badge '+p+'">'+m.label+'</span>';}
+function el(id){return document.getElementById(id);}
+function html(id,h){el(id).innerHTML=h;}
+
+function callClaude(system, user) {
+  return fetch('/.netlify/functions/claude-proxy', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({system:system,max_tokens:2000,messages:[{role:'user',content:user}]})
+  }).then(function(r){return r.json();}).then(function(d){
+    if (!d.content) throw new Error(d.error||'Proxy error');
+    return d.content[0].text;
+  });
+}
+
+function saveTgts(){try{localStorage.setItem('rs-t4',JSON.stringify(S.targets));}catch(e){}}
+function loadTgts(){try{var s=localStorage.getItem('rs-t4');S.targets=s?JSON.parse(s):JSON.parse(JSON.stringify(DEFAULT_TARGETS));}catch(e){S.targets=JSON.parse(JSON.stringify(DEFAULT_TARGETS));}}
+
+// GATE
+document.getElementById('pwbtn').addEventListener('click', function() {
+  var pw = el('pw').value;
   if (!pw) return;
-  var btn = document.getElementById('btn');
-  var err = document.getElementById('err');
+  var btn = el('pwbtn');
+  var err = el('pwerr');
   btn.textContent = 'CHECKING...';
   btn.disabled = true;
   err.style.display = 'none';
   fetch('/.netlify/functions/check-pw', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({password: pw})
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(d) {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({password:pw})
+  }).then(function(r){return r.json();}).then(function(d){
     if (d.ok) {
-      document.getElementById('gate').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
+      sessionStorage.setItem('rs-auth','1');
+      el('gate').style.display = 'none';
+      launchApp();
     } else {
-      err.textContent = 'Incorrect password';
+      err.textContent = d.error || 'Incorrect password';
       err.style.display = 'block';
-      document.getElementById('pw').value = '';
+      el('pw').value = '';
       btn.textContent = 'ENTER THE PLATFORM';
       btn.disabled = false;
     }
-  })
-  .catch(function(e) {
+  }).catch(function(e){
     err.textContent = 'Error: ' + e.message;
     err.style.display = 'block';
     btn.textContent = 'ENTER THE PLATFORM';
     btn.disabled = false;
   });
 });
+
+el('pw').addEventListener('keydown', function(e){if(e.key==='Enter') el('pwbtn').click();});
+
+function launchApp() {
+  el('gate').style.display = 'none';
+  el('app').style.display = 'block';
+  loadTgts();
+  initNav();
+  renderAll();
+}
+
+if (sessionStorage.getItem('rs-auth')==='1') {
+  launchApp();
+}
+
+function initNav() {
+  el('navtabs').innerHTML = TABS.map(function(t){
+    return '<button class="ntab'+(t.id===S.tab?' on':'')+'" data-tab="'+t.id+'">'+t.label+'</button>';
+  }).join('');
+  el('navtabs').addEventListener('click', function(e){
+    var b = e.target.closest('.ntab');
+    if (b) switchTab(b.dataset.tab);
+  });
+}
+
+function switchTab(id) {
+  S.tab = id;
+  document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.tab===id);});
+  document.querySelectorAll('.pane').forEach(function(p){p.classList.toggle('on',p.id==='p-'+id);});
+  renderTab(id);
+}
+
+function updateStatus() {
+  var pipe = S.targets.filter(function(t){return t.stage!=='Prospecting'&&t.stage!=='Closed';}).reduce(function(s,t){return s+t.high;},0);
+  var pv = el('pipeval');
+  pv.style.display = pipe>0?'':'none';
+  pv.textContent = fmt(pipe)+' pipeline';
+}
+
+function renderAll() {
+  updateStatus();
+  TABS.forEach(function(t){renderTab(t.id);});
+}
+
+function renderTab(id) {
+  var fns = {dashboard:renderDash,targets:renderTargets,outreach:renderOutreach,valuation:renderVal,buyers:renderBuyers,pipeline:renderPipeline,docs:renderDocs,settings:renderSettings};
+  if (fns[id]) fns[id]();
+}
+
+function renderDash() {
+  var t=S.targets;
+  var lo=t.reduce(function(s,x){return s+x.low;},0);
+  var hi=t.reduce(function(s,x){return s+x.high;},0);
+  var crit=t.filter(function(x){return x.priority==='critical';}).length;
+  var act=t.filter(function(x){return x.stage!=='Prospecting'&&x.stage!=='Closed';}).length;
+  var clv=t.filter(function(x){return x.stage==='Closed';}).reduce(function(s,x){return s+x.high;},0);
+  function sc(label,val,sub,color){return '<div class="card" style="text-align:center"><div class="lbl">'+label+'</div><div style="font-size:28px;font-weight:700;color:'+color+';margin-bottom:4px">'+val+'</div>'+(sub?'<div style="font-size:10px;color:var(--td)">'+sub+'</div>':'')+'</div>';}
+  var topT=t.filter(function(x){return x.priority==='critical'||x.priority==='high';}).slice(0,5).map(function(x){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd)"><div><div style="font-size:12px;font-weight:700">'+esc(x.company)+'</div><div style="font-size:9px;color:var(--td)">'+esc(x.location)+'</div></div><div style="text-align:right">'+bdg(x.priority)+'<div style="font-size:10px;color:var(--grn);margin-top:4px">'+fmt(x.low)+'-'+fmt(x.high)+'</div></div></div>';}).join('');
+  var stg=STAGES.map(function(stage){var cnt=t.filter(function(x){return x.stage===stage;}).length;var pct=Math.round((cnt/Math.max(t.length,1))*100);return '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:9px;color:var(--td);letter-spacing:1.5px">'+stage.toUpperCase()+'</span><span style="font-size:9px;color:'+SCLR[stage]+';font-weight:700">'+cnt+'</span></div><div class="pbar"><div class="pfill" style="width:'+pct+'%;background:'+SCLR[stage]+'"></div></div></div>';}).join('');
+  var qa=[{label:'GENERATE EMAILS',sub:'AI outreach sequences',tab:'outreach'},{label:'VALUE ASSETS',sub:'AI recovery estimates',tab:'valuation'},{label:'MOVE DEALS',sub:'Update pipeline stages',tab:'pipeline'},{label:'CREATE DOCS',sub:'Agreements & assessments',tab:'docs'}].map(function(a){return '<div class="qa" data-tab="'+a.tab+'"><div style="font-size:9px;color:var(--acc);font-weight:700;letter-spacing:1.5px;margin-bottom:4px">'+a.label+'</div><div style="font-size:10px;color:var(--td)">'+a.sub+'</div></div>';}).join('');
+  html('p-dashboard','<div style="margin-bottom:24px"><div class="lbl ac">// OVERVIEW</div><div class="ttl">Pipeline Dashboard</div><div class="sub">South Jersey - Philadelphia Metro - Mid-Atlantic</div></div><div class="g4" style="margin-bottom:20px">'+sc('TOTAL TARGETS',t.length,'WARN Act filings','var(--acc)')+sc('EST. RECOVERY',fmt(lo)+'-'+fmt(hi),'gross across all targets','var(--grn)')+sc('CRITICAL',crit,'immediate action required','#EF4444')+sc('ACTIVE DEALS',act,'in pipeline stages','var(--yel)')+'</div><div class="g2" style="margin-bottom:16px"><div class="card"><div class="lbl ac" style="margin-bottom:12px">// TOP PRIORITY TARGETS</div>'+topT+'<div style="margin-top:12px"><button class="btn full" data-tab="targets">VIEW ALL TARGETS</button></div></div><div class="card"><div class="lbl ac" style="margin-bottom:12px">// PIPELINE BY STAGE</div>'+stg+(clv>0?'<div style="margin-top:12px;padding:8px 12px;background:var(--s2);border-radius:3px;border:1px solid rgba(76,175,118,.3)"><div style="font-size:9px;color:var(--grn);letter-spacing:1.5px">TOTAL CLOSED</div><div style="font-size:16px;color:var(--grn);font-weight:700">'+fmt(clv)+'</div><div style="font-size:9px;color:var(--td)">fee: '+fee(clv)+'</div></div>':'')+'</div></div><div class="card"><div class="lbl ac" style="margin-bottom:12px">// QUICK ACTIONS</div><div class="g4">'+qa+'</div></div>');
+  el('p-dashboard').addEventListener('click',function(e){var q=e.target.closest('[data-tab]');if(q)switchTab(q.dataset.tab);});
+}
+
+function renderTargets() {
+  if (S.detailId) {renderDetail();return;}
+  var filtered=S.filterP==='all'?S.targets:S.targets.filter(function(t){return t.priority===S.filterP;});
+  var fbtns=['all','critical','high','medium'].map(function(f){return '<button class="btn sm'+(f===S.filterP?'':' m')+'" data-f="'+f+'">'+f.toUpperCase()+'</button>';}).join('');
+  var rows=filtered.map(function(t){return '<div class="trow" data-id="'+t.id+'"><div><div style="font-size:13px;font-weight:700;margin-bottom:2px">'+esc(t.company)+'</div><div style="font-size:10px;color:var(--td)">'+esc(t.location)+' - '+esc(t.industry)+'</div></div><div><div class="lbl" style="margin-bottom:2px">WORKERS</div><div style="font-size:12px;color:var(--tm)">'+t.workers+'</div></div><div><div class="lbl" style="margin-bottom:2px">RECOVERY</div><div style="font-size:12px;color:var(--grn);font-weight:700">'+fmt(t.low)+'-'+fmt(t.high)+'</div><div style="font-size:9px;color:var(--acc)">fee: '+fee(t.high)+'</div></div>'+bdg(t.priority)+'<div style="text-align:right"><div style="font-size:9px;color:'+(SCLR[t.stage]||'var(--td)')+';letter-spacing:1.5px;font-weight:700">'+t.stage.toUpperCase()+'</div>'+(t.contact?'<div style="font-size:9px;color:var(--td);margin-top:3px">'+esc(t.contact)+'</div>':'')+'</div></div>';}).join('');
+  html('p-targets','<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px"><div><div class="lbl ac">// WARN ACT TARGETS</div><div class="ttl">Target Companies</div><div class="sub" style="margin-bottom:0">'+S.targets.length+' companies - click to view details</div></div><div style="display:flex;gap:8px">'+fbtns+'</div></div><div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>');
+  el('p-targets').addEventListener('click',function(e){var r=e.target.closest('.trow');if(r){S.detailId=parseInt(r.dataset.id);renderTargets();return;}var f=e.target.closest('[data-f]');if(f){S.filterP=f.dataset.f;renderTargets();}});
+}
+
+function renderDetail() {
+  var t=S.targets.find(function(x){return x.id===S.detailId;});
+  if(!t){S.detailId=null;renderTargets();return;}
+  var so=STAGES.map(function(s){return '<option value="'+s+'"'+(s===t.stage?' selected':'')+'>'+s+'</option>';}).join('');
+  var po=Object.keys(PMETA).map(function(p){return '<option value="'+p+'"'+(p===t.priority?' selected':'')+'>'+p+'</option>';}).join('');
+  var assets=t.assets.map(function(a){return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd)"><div style="width:4px;height:4px;background:var(--acc);border-radius:50%;flex-shrink:0"></div><span style="font-size:11px;color:var(--tm)">'+esc(a)+'</span></div>';}).join('');
+  html('p-targets','<div style="display:flex;gap:10px;align-items:center;margin-bottom:20px"><button class="btn" id="backbtn">BACK</button><div style="font-size:18px;font-weight:700">'+esc(t.company)+'</div>'+bdg(t.priority)+'</div><div class="g2"><div style="display:flex;flex-direction:column;gap:12px"><div class="card"><div class="lbl ac" style="margin-bottom:12px">// COMPANY INFO</div>'+[['Location',t.location],['Industry',t.industry],['Workers',t.workers],['Date',t.date]].map(function(kv){return '<div style="display:flex;gap:12px;margin-bottom:8px"><span style="font-size:9px;color:var(--td);letter-spacing:1.5px;min-width:64px">'+kv[0].toUpperCase()+'</span><span style="font-size:12px">'+esc(kv[1])+'</span></div>';}).join('')+'</div><div class="card"><div class="lbl ac" style="margin-bottom:12px">// RECOVERY</div><div class="g2"><div><div class="lbl">RANGE</div><div style="font-size:16px;color:var(--grn);font-weight:700">'+fmt(t.low)+'-'+fmt(t.high)+'</div></div><div><div class="lbl">YOUR FEE</div><div style="font-size:16px;color:var(--acc);font-weight:700">'+fee(t.low)+'-'+fee(t.high)+'</div></div></div></div><div class="card"><div class="lbl" style="margin-bottom:6px">STAGE</div><select id="sel-stage">'+so+'</select><div class="lbl" style="margin-top:12px;margin-bottom:6px">PRIORITY</div><select id="sel-prio">'+po+'</select><div class="lbl" style="margin-top:12px;margin-bottom:6px">CONTACT</div><input class="inp" type="text" id="inp-contact" value="'+esc(t.contact)+'" placeholder="CFO name, email..." /></div></div><div style="display:flex;flex-direction:column;gap:12px"><div class="card"><div class="lbl ac" style="margin-bottom:12px">// ASSETS</div>'+assets+'</div><div class="card"><div class="lbl" style="margin-bottom:6px">NOTES</div><textarea id="inp-notes" rows="7">'+esc(t.notes)+'</textarea></div></div></div>');
+
+el(‘backbtn’).addEventListener(‘click’,function(){S.detailId=null;renderTargets();});
+el(‘sel-stage’).addEventListener(‘change’,function(){t.stage=this.value;saveTgts();updateStatus();});
+el(‘sel-prio’).addEventListener(‘change’,function(){t.priority=this.value;saveTgts();});
+el(‘inp-contact’).addEventListener(‘input’,function(){t.contact=this.value;saveTgts();});
+el(‘inp-notes’).addEventListener(‘input’,function(){t.notes=this.value;saveTgts();});
+}
+
+function renderOutreach() {
+var tOpts=S.targets.map(function(t){return ‘<option value=”’+t.id+’”’+(t.id==S.oeId?’ selected’:’’)+’>’+esc(t.company)+’ - ‘+esc(t.location)+’</option>’;}).join(’’);
+var sel=S.targets.find(function(t){return t.id==S.oeId;});
+var recBdg=sel?’<div style="background:var(--s2);padding:8px 14px;border-radius:3px;flex-shrink:0"><div class="lbl" style="margin-bottom:2px">EST. RECOVERY</div><div style="font-size:13px;color:var(--grn);font-weight:700">’+fmt(sel.low)+’-’+fmt(sel.high)+’</div></div>’:’’;
+var emails=S.oeEmails.map(function(e,i){return ‘<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="display:flex;gap:10px;align-items:center"><span style="background:var(--adim);color:var(--acc);font-size:9px;font-weight:700;letter-spacing:1.5px;padding:3px 8px;border-radius:2px">DAY ‘+e.day+’</span><div style="font-size:12px;font-weight:700">Subject: ‘+esc(e.subject)+’</div></div><button class="btn sm m" data-copy="'+i+'">COPY</button></div><div style="font-size:11px;color:var(--tm);line-height:1.9;white-space:pre-wrap;background:var(--s2);padding:12px 14px;border-radius:3px" id="eb'+i+'">Subject: ‘+esc(e.subject)+’\n\n’+esc(e.body)+’</div></div>’;}).join(’’);
+html(‘p-outreach’,’<div class="lbl ac">// AI ENGINE</div><div class="ttl">Cold Outreach Generator</div><div class="sub">5-email sequences personalized per target - AI-generated - copy and send</div><div class="card" style="margin-bottom:16px"><div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:flex-end"><div><div class="lbl">SELECT TARGET COMPANY</div><select id="oe-sel"><option value="">– Choose a target –</option>’+tOpts+’</select></div>’+recBdg+’<button class=“btn” id=“oe-btn”’+((!S.oeId||S.oeLoading)?’ disabled’:’’)+’>’+( S.oeLoading?‘GENERATING…’:‘GENERATE’)+’</button></div>’+(S.oeErr?’<div style="margin-top:8px;color:var(--red);font-size:11px">’+esc(S.oeErr)+’</div>’:’’)+’</div>’+emails);
+el(‘oe-sel’).addEventListener(‘change’,function(){S.oeId=this.value;renderOutreach();});
+if(el(‘oe-btn’))el(‘oe-btn’).addEventListener(‘click’,genEmails);
+el(‘p-outreach’).addEventListener(‘click’,function(e){var cb=e.target.closest(’[data-copy]’);if(!cb)return;var i=cb.dataset.copy;var elem=el(‘eb’+i);navigator.clipboard.writeText(elem.innerText||elem.textContent);cb.textContent=‘COPIED’;setTimeout(function(){cb.textContent=‘COPY’;},2000);});
+}
+
+function genEmails() {
+var t=S.targets.find(function(x){return x.id==S.oeId;});
+if(!t)return;
+S.oeLoading=true;S.oeErr=’’;S.oeEmails=[];renderOutreach();
+callClaude(
+‘You are an expert B2B cold email copywriter specializing in industrial asset recovery. Write direct, professional, value-first emails. Respond with valid JSON only.’,
+‘Generate a 5-email cold outreach sequence to the CFO or VP Operations at ‘+t.company+’ (’+t.location+’). Industry: ‘+t.industry+’. Workers: ‘+t.workers+’ as of ‘+t.date+’. Assets: ‘+t.assets.join(’, ‘)+’. Recovery: ‘+fmt(t.low)+’-’+fmt(t.high)+’. Notes: ‘+t.notes+’. Sender: independent stranded asset recovery consultant. Offer: FREE assessment, zero upfront, 12% success fee only. Return JSON only: {“emails”:[{“day”:1,“subject”:”…”,“body”:”…”},{“day”:3,“subject”:”…”,“body”:”…”},{“day”:7,“subject”:”…”,“body”:”…”},{“day”:14,“subject”:”…”,“body”:”…”},{“day”:30,“subject”:”…”,“body”:”…”}]}’
+).then(function(text){
+S.oeEmails=JSON.parse(text.replace(/`json|`/g,’’).trim()).emails;
+S.oeLoading=false;renderOutreach();
+}).catch(function(e){
+S.oeErr=’Generation failed: ’+e.message;
+S.oeLoading=false;renderOutreach();
+});
+}
+
+function renderVal() {
+var tOpts=S.targets.map(function(t){return ‘<option value=”’+t.id+’”’+(t.id==S.valTId?’ selected’:’’)+’>’+esc(t.company)+’ - ‘+esc(t.location)+’</option>’;}).join(’’);
+var items=S.valItems.map(function(a,i){
+var cats=ASSET_CATS.map(function(c){return ‘<option value=”’+c+’”’+(c===a.cat?’ selected’:’’)+’>’+c+’</option>’;}).join(’’);
+var conds=CONDITIONS.map(function(c){return ‘<option value=”’+c+’”’+(c===a.cond?’ selected’:’’)+’>’+c+’</option>’;}).join(’’);
+return ‘<div style="background:var(--s2);padding:10px;border-radius:3px;border:1px solid var(--bd);margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span class="lbl" style="margin-bottom:0">ASSET ‘+(i+1)+’</span>’+(S.valItems.length>1?’<span style="cursor:pointer;color:var(--red);font-size:12px" data-rm="'+i+'">x</span>’:’’)+’</div><div style="display:flex;flex-direction:column;gap:5px"><select data-vi="'+i+'" data-vk="cat"><option value="">Category…</option>’+cats+’</select><input class="inp" type="text" value="'+esc(a.desc)+'" placeholder="Brand / model / description..." data-vi="'+i+'" data-vk="desc" /><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px"><input class="inp" type="number" min="1" value="'+a.qty+'" data-vi="'+i+'" data-vk="qty" /><input class="inp" type="text" value="'+esc(a.year)+'" placeholder="Year" data-vi="'+i+'" data-vk="year" /><select data-vi="'+i+'" data-vk="cond">’+conds+’</select></div></div></div>’;
+}).join(’’);
+var result=’<div class="card" style="display:flex;align-items:center;justify-content:center;min-height:320px;flex-direction:column;gap:12px"><div style="font-size:11px;color:var(--td)">Enter assets and click Generate Estimate</div></div>’;
+if(S.valResult){
+var r=S.valResult;
+var bkrows=(r.assets||[]).map(function(a){return ‘<div class="bkrow"><div><div style="font-size:12px;font-weight:600">’+esc(a.name)+’</div><div style="font-size:9px;color:var(--td);margin-top:2px">’+esc(a.notes||’’)+’</div></div><div style="font-size:12px;color:var(--tm)">’+a.qty+’</div><div style="font-size:11px;color:var(--grn)">’+fmt(a.unitLow)+’-’+fmt(a.unitHigh)+’</div><div style="font-size:12px;color:var(--grn);font-weight:700">’+fmt(a.totalLow)+’-’+fmt(a.totalHigh)+’</div><div style="font-size:9px;font-weight:700;color:'+(a.confidence==='high'?'var(--grn)':a.confidence==='medium'?'var(--acc)':'var(--red)')+'">’+esc((a.confidence||’’).toUpperCase())+’</div><div style="font-size:10px;color:var(--tm)">’+esc(a.channel||’’)+’</div></div>’;}).join(’’);
+result=’<div style="display:flex;flex-direction:column;gap:12px"><div class="g3"><div class="card"><div class="lbl">RECOVERY RANGE</div><div style="font-size:22px;color:var(--grn);font-weight:700">’+fmt(r.totalLow)+’</div><div style="font-size:13px;color:var(--tm)">to ‘+fmt(r.totalHigh)+’</div></div><div class="card"><div class="lbl">YOUR FEE @ 12%</div><div style="font-size:22px;color:var(--acc);font-weight:700">’+fmt(r.feeLow)+’</div><div style="font-size:13px;color:var(--tm)">to ‘+fmt(r.feeHigh)+’</div></div><div class="card"><div class="lbl">TIMELINE</div><div style="font-size:16px;font-weight:700;margin-top:4px">’+esc(r.timeline||’’)+’</div><div style="font-size:10px;color:var(--td)">via ‘+esc(r.topChannel||’’)+’</div></div></div><div class="card" style="border:1px solid rgba(45,122,80,.4)"><div class="lbl ac">STRATEGIC INSIGHT</div><div style="font-size:12px;color:var(--tm);line-height:1.8">’+esc(r.insight||’’)+’</div></div><div class="card" style="padding:0"><div style="padding:10px 14px;border-bottom:1px solid var(--bd);background:var(--s2)"><div class="lbl" style="margin-bottom:0">ASSET BREAKDOWN</div></div><div class="bkhd">’+[‘ASSET’,‘QTY’,‘UNIT VALUE’,‘TOTAL’,‘CONFIDENCE’,‘CHANNEL’].map(function(h){return ‘<div style="font-size:8px;color:var(--td);letter-spacing:2px;font-weight:700">’+h+’</div>’;}).join(’’)+’</div>’+bkrows+’</div></div>’;
+}
+html(‘p-valuation’,’<div class="lbl ac">// AI ENGINE</div><div class="ttl">Asset Valuation Engine</div><div class="sub">Input any asset list - AI estimates per-asset recovery value, best channels, and timeline</div><div style="display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start"><div style="display:flex;flex-direction:column;gap:12px"><div class="card"><div class="lbl">LINK TO TARGET (OPTIONAL)</div><select id="val-tsel"><option value="">Ad-hoc assessment</option>’+tOpts+’</select></div><div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="lbl" style="margin-bottom:0">ASSET INVENTORY</div><button class="btn sm g" id="val-add">+ ADD</button></div>’+items+’</div><button class=“btn full” id=“val-btn”’+(S.valLoading||S.valItems.every(function(a){return !a.desc&&!a.cat;})?’ disabled’:’’)+’>’+( S.valLoading?‘ANALYZING…’:‘GENERATE ESTIMATE’)+’</button>’+(S.valErr?’<div style="color:var(--red);font-size:11px">’+esc(S.valErr)+’</div>’:’’)+’</div><div>’+result+’</div></div>’);
+el(‘val-tsel’).addEventListener(‘change’,function(){S.valTId=this.value;var t=S.targets.find(function(x){return x.id==S.valTId;});if(t)S.valItems=t.assets.map(function(a){return{cat:‘Manufacturing Equipment’,desc:a,qty:1,year:’’,cond:‘Good’};});else S.valItems=[{cat:’’,desc:’’,qty:1,year:’’,cond:‘Good’}];renderVal();});
+if(el(‘val-add’))el(‘val-add’).addEventListener(‘click’,function(){S.valItems.push({cat:’’,desc:’’,qty:1,year:’’,cond:‘Good’});renderVal();});
+if(el(‘val-btn’))el(‘val-btn’).addEventListener(‘click’,genVal);
+el(‘p-valuation’).addEventListener(‘click’,function(e){var rm=e.target.closest(’[data-rm]’);if(rm){S.valItems.splice(parseInt(rm.dataset.rm),1);renderVal();}});
+el(‘p-valuation’).addEventListener(‘change’,function(e){var vi=e.target.dataset.vi,vk=e.target.dataset.vk;if(vi!==undefined&&vk)S.valItems[vi][vk]=e.target.value;});
+el(‘p-valuation’).addEventListener(‘input’,function(e){var vi=e.target.dataset.vi,vk=e.target.dataset.vk;if(vi!==undefined&&vk)S.valItems[vi][vk]=vk===‘qty’?(parseInt(e.target.value)||1):e.target.value;});
+}
+
+function genVal() {
+S.valLoading=true;S.valResult=null;S.valErr=’’;renderVal();
+var t=S.targets.find(function(x){return x.id==S.valTId;});
+var list=S.valItems.map(function(a,i){return (i+1)+’. [’+(a.cat||‘Unknown’)+’] ‘+(a.desc||’-’)+’ | Qty:’+a.qty+’ | Year:’+(a.year||‘N/A’)+’ | Condition:’+a.cond;}).join(’\n’);
+callClaude(
+‘You are an expert industrial asset appraiser. Respond with valid JSON only.’,
+‘Estimate fair market recovery values for these assets’+(t?’ from ‘+t.company+’ (’+t.location+’, ‘+t.industry+’)’:’’)+’: ‘+list+’. Return JSON: {“assets”:[{“name”:””,“qty”:0,“unitLow”:0,“unitHigh”:0,“totalLow”:0,“totalHigh”:0,“confidence”:“high|medium|low”,“channel”:””,“notes”:””}],“totalLow”:0,“totalHigh”:0,“feeLow”:0,“feeHigh”:0,“timeline”:””,“topChannel”:””,“insight”:””}’
+).then(function(text){
+S.valResult=JSON.parse(text.replace(/`json|`/g,’’).trim());
+S.valLoading=false;renderVal();
+}).catch(function(e){
+S.valErr=’Valuation failed: ’+e.message;
+S.valLoading=false;renderVal();
+});
+}
+
+function renderBuyers() {
+var cats=[];BUYERS.forEach(function(b){if(cats.indexOf(b.cat)<0)cats.push(b.cat);});
+html(‘p-buyers’,’<div class="lbl ac">// BUYER NETWORK</div><div class="ttl">Buyer Database</div><div class="sub">Pre-vetted buyer channels by asset type - most will bid within 48 hours</div>’+cats.map(function(cat){return ‘<div style="margin-bottom:24px"><div style="font-size:9px;color:var(--acc);letter-spacing:2.5px;font-weight:700;margin-bottom:10px;border-bottom:1px solid var(--bd);padding-bottom:6px">// ‘+cat.toUpperCase()+’</div><div class="g3">’+BUYERS.filter(function(b){return b.cat===cat;}).map(function(b){return ‘<div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-size:13px;font-weight:700">’+esc(b.name)+’</div><span style="font-size:9px;color:var(--grn);font-weight:700">’+b.min+’</span></div><div style="font-size:11px;color:var(--tm);margin-bottom:6px">’+esc(b.note)+’</div><div style="font-size:10px;color:var(--td)">’+b.url+’</div></div>’;}).join(’’)+’</div></div>’;}).join(’’));
+}
+
+function renderPipeline() {
+var pipe=S.targets.filter(function(t){return t.stage!==‘Prospecting’&&t.stage!==‘Closed’;}).reduce(function(s,t){return s+t.high;},0);
+var closed=S.targets.filter(function(t){return t.stage===‘Closed’;}).reduce(function(s,t){return s+t.high;},0);
+var cols=STAGES.map(function(stage){
+var st=S.targets.filter(function(t){return t.stage===stage;});
+var sv=st.reduce(function(s,t){return s+t.high;},0);
+var idx=STAGES.indexOf(stage);
+var cards=st.map(function(t){return ‘<div style="background:var(--s1);border:1px solid var(--bd);border-radius:4px;padding:10px;margin-bottom:8px"><div style="font-size:11px;font-weight:700;margin-bottom:2px">’+esc(t.company)+’</div><div style="font-size:9px;color:var(--td);margin-bottom:6px">’+esc(t.location)+’</div><div style="font-size:12px;color:var(--grn);font-weight:700">’+fmt(t.low)+’-’+fmt(t.high)+’</div><div style="font-size:9px;color:var(--acc);margin-bottom:8px">fee: ‘+fee(t.high)+’</div>’+bdg(t.priority)+’<div style="display:flex;gap:4px;margin-top:8px">’+(idx>0?’<button style="flex:1;background:var(--s2);border:1px solid var(--bd);color:var(--td);font-size:8px;padding:4px 2px;cursor:pointer;font-family:var(--ff);border-radius:2px" data-mv="'+t.id+'" data-dir="-1">BACK</button>’:’’)+(idx<STAGES.length-1?’<button style="flex:1;background:var(--adim);border:1px solid var(--acc);color:var(--acc);font-size:8px;padding:4px 2px;cursor:pointer;font-family:var(--ff);border-radius:2px" data-mv="'+t.id+'" data-dir="1">NEXT</button>’:’’)+’</div></div>’;}).join(’’);
+return ‘<div><div style="margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid '+SCLR[stage]+'"><div style="font-size:9px;font-weight:700;color:'+SCLR[stage]+';letter-spacing:1.5px">’+stage.toUpperCase()+’</div><div style="font-size:10px;color:var(--td)">’+st.length+’ deal’+(st.length!==1?‘s’:’’)+(sv>0?’ <span style="color:var(--grn)">’+fmt(sv)+’</span>’:’’)+’</div></div>’+cards+’</div>’;
+}).join(’’);
+html(‘p-pipeline’,’<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px"><div><div class="lbl ac">// DEAL FLOW</div><div class="ttl">Pipeline Tracker</div><div class="sub" style="margin-bottom:0">Click NEXT to advance deals through stages</div></div><div style="display:flex;gap:16px"><div style="text-align:right"><div style="font-size:9px;color:var(--td);letter-spacing:2px">ACTIVE PIPELINE</div><div style="font-size:18px;color:var(--acc);font-weight:700">’+fmt(pipe)+’</div></div><div style="text-align:right"><div style="font-size:9px;color:var(--td);letter-spacing:2px">CLOSED</div><div style="font-size:18px;color:var(--grn);font-weight:700">’+fmt(closed)+’</div></div></div></div><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">’+cols+’</div>’);
+el(‘p-pipeline’).addEventListener(‘click’,function(e){var b=e.target.closest(’[data-mv]’);if(!b)return;var t=S.targets.find(function(x){return x.id===parseInt(b.dataset.mv);});if(!t)return;var i=STAGES.indexOf(t.stage);t.stage=STAGES[Math.min(Math.max(i+parseInt(b.dataset.dir),0),STAGES.length-1)];saveTgts();updateStatus();renderPipeline();});
+}
+
+function renderDocs() {
+var tOpts=S.targets.map(function(t){return ‘<option value=”’+t.id+’”’+(t.id==S.docTId?’ selected’:’’)+’>’+esc(t.company)+’</option>’;}).join(’’);
+var needsT=[‘agreement’,‘assessment’,‘intro’].indexOf(S.docType)>-1;
+var dtbtns=DOC_TYPES.map(function(d){return ‘<div class="dtopt'+(d.id===S.docType?' on':'')+'" data-dt="'+d.id+'"><div style="font-size:11px;font-weight:700;color:'+(d.id===S.docType?'var(--acc)':'var(--tx)')+'">’+d.label+’</div><div style="font-size:10px;color:var(--td)">’+d.desc+’</div></div>’;}).join(’’);
+var output=S.docText?’<div style="position:relative;padding:16px;background:var(--s1);border:1px solid var(--bd);border-radius:4px;min-height:400px"><div style="position:absolute;top:12px;right:12px"><button class="btn sm m" id="doc-copy">COPY ALL</button></div><div style="font-size:12px;color:var(--tm);line-height:2;white-space:pre-wrap;padding-right:80px;font-family:var(--ff)" id="doc-out">’+esc(S.docText)+’</div></div>’:’<div class="card" style="display:flex;align-items:center;justify-content:center;min-height:400px;flex-direction:column;gap:12px"><div style="font-size:11px;color:var(--td)">Select a document type and click Generate</div></div>’;
+html(‘p-docs’,’<div class="lbl ac">// AI ENGINE</div><div class="ttl">Document Generator</div><div class="sub">Professional documents on demand - capability statements - agreements - assessments</div><div style="display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:start"><div style="display:flex;flex-direction:column;gap:12px"><div class="card"><div class="lbl">DOCUMENT TYPE</div>’+dtbtns+’</div><div class="card"><div class="lbl">YOUR DETAILS</div><div style="display:flex;flex-direction:column;gap:8px"><input class="inp" type="text" id="doc-name" value="'+esc(S.docName)+'" placeholder="Your name..." /><input class="inp" type="text" id="doc-co" value="'+esc(S.docCo)+'" placeholder="Your company..." />’+(needsT?’<div class="lbl" style="margin-top:4px;margin-bottom:4px">TARGET COMPANY</div><select id="doc-tsel"><option value="">Select target…</option>’+tOpts+’</select>’:’’)+’</div></div><button class=“btn full” id=“doc-btn”’+(S.docLoading?’ disabled’:’’)+’>’+( S.docLoading?‘GENERATING…’:‘GENERATE DOCUMENT’)+’</button>’+(S.docErr?’<div style="color:var(--red);font-size:11px">’+esc(S.docErr)+’</div>’:’’)+’</div>’+output+’</div>’);
+el(‘p-docs’).addEventListener(‘click’,function(e){var dt=e.target.closest(’[data-dt]’);if(dt){S.docType=dt.dataset.dt;S.docText=’’;renderDocs();return;}});
+el(‘doc-name’).addEventListener(‘input’,function(){S.docName=this.value;});
+el(‘doc-co’).addEventListener(‘input’,function(){S.docCo=this.value;});
+if(el(‘doc-tsel’))el(‘doc-tsel’).addEventListener(‘change’,function(){S.docTId=this.value;});
+if(el(‘doc-btn’))el(‘doc-btn’).addEventListener(‘click’,genDoc);
+if(el(‘doc-copy’))el(‘doc-copy’).addEventListener(‘click’,function(){var e=el(‘doc-out’);navigator.clipboard.writeText(e.innerText||e.textContent);this.textContent=‘COPIED’;var self=this;setTimeout(function(){self.textContent=‘COPY ALL’;},2000);});
+}
+
+function genDoc() {
+S.docLoading=true;S.docText=’’;S.docErr=’’;renderDocs();
+var who=S.docName||‘the consultant’,firm=S.docCo||‘Reclaim Solutions’;
+var t=S.targets.find(function(x){return x.id==S.docTId;});
+var co=t?t.company:’[CLIENT]’,loc=t?t.location:’’;
+var ind=t?t.industry:’’,asts=t?t.assets.join(’, ‘):’’;
+var wkrs=t?t.workers:’’,dt=t?t.date:’’;
+var lo=t?fmt(t.low):’’,hi=t?fmt(t.high):’’,nt=t?t.notes:’’;
+var prompts={
+capability:‘Write a professional one-page capability statement for ‘+who+’ at ‘+firm+’, a stranded asset recovery consultant. Sections: What We Do, How It Works (assess, market, close), Our Offer (free assessment, 12% success fee, zero upfront), Who We Serve, Why Work With Us. 350-400 words.’,
+agreement:‘Write a professional asset recovery broker agreement between ‘+firm+’ (Broker) and ‘+co+’ (Client)’+(loc?’ in ‘+loc:’’)+’. Sections: Recitals, Scope, Compensation (12% success fee), Exclusivity (90 days), Payment (net 30), Representations, Liability Limitations, Term and Termination, Governing Law (New Jersey), Signatures.’,
+assessment:‘Write a one-page asset recovery opportunity assessment for ‘+co+(loc?’ in ‘+loc:’’)+’.’+(ind?’ Industry: ‘+ind+’.’:’’)+(wkrs?’ Workers: ‘+wkrs+’ as of ‘+dt+’.’:’’)+(asts?’ Assets: ‘+asts+’.’:’’)+(nt?’ Context: ‘+nt:’’)+(lo&&hi?’ Estimated recovery: ‘+lo+’-’+hi+’.’:’’)+’ Sections: Executive Summary, Asset Overview, Recovery Scenarios, Recommended Channels, Timeline, Next Steps. Professional, CFO-ready.’,
+intro:‘Write a short professional email from ‘+who+’ at ‘+firm+’ to the CFO at ‘+co+(loc?’ in ‘+loc:’’)+’.’+(wkrs?’ They had ‘+wkrs+’ workers affected as of ‘+dt+’.’:’’)+(asts?’ Assets include: ‘+asts+’.’:’’)+(nt?’ Notes: ‘+nt:’’)+’ Three short paragraphs. Low-pressure CTA: free assessment, no cost. Subject line first.’
+};
+callClaude(‘You are an expert business consultant and professional writer. Write clean professional documents. No markdown code fences.’,prompts[S.docType]).then(function(text){
+S.docText=text;S.docLoading=false;renderDocs();
+}).catch(function(e){
+S.docErr=’Generation failed: ’+e.message;S.docLoading=false;renderDocs();
+});
+}
+
+function renderSettings() {
+html(‘p-settings’,’<div class="lbl ac">// SETTINGS</div><div class="ttl">Platform Settings</div><div style="display:flex;flex-direction:column;gap:16px;max-width:560px;margin-top:20px"><div class="card"><div class="lbl ac" style="margin-bottom:12px">// AI ENGINE</div><div style="font-size:11px;color:var(--td);line-height:1.7">All AI features run through a secure server-side proxy. The Anthropic API key is stored as the <span style="color:var(--acc)">ANTHROPIC_KEY</span> Netlify environment variable and never exposed to the browser.</div><div style="margin-top:10px;font-size:10px;color:var(--grn)">Secure - key lives on the server only</div></div><div class="card"><div class="lbl ac" style="margin-bottom:12px">// ACCESS PASSWORD</div><div style="font-size:11px;color:var(--td);line-height:1.7">Password is set via the <span style="color:var(--acc)">WEBSITE_PW</span> Netlify environment variable.</div></div><div class="card"><div class="lbl ac" style="margin-bottom:12px">// DATA MANAGEMENT</div><div style="font-size:11px;color:var(--td);margin-bottom:12px">Target data and pipeline stages are saved in browser localStorage.</div><button class="btn r" id="clear-btn">CLEAR ALL DATA</button></div></div>’);
+el(‘clear-btn’).addEventListener(‘click’,function(){if(window.confirm(‘Clear all data? Cannot be undone.’)){localStorage.removeItem(‘rs-t4’);loadTgts();renderAll();}});
+}
 </script>
+
 </body>
 </html>
