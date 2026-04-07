@@ -186,7 +186,7 @@ var DOC_TYPES = [
 
 var S = {
   tab:'dashboard',targets:[],detailId:null,filterP:'all',
-  adding:false,newTgt:null,fetching:false,fetchErr:'',fetchRegion:'New Jersey',
+  adding:false,newTgt:null,fetching:false,fetchErr:'',fetchRegion:'New Jersey',fetchResults:[],
   oeId:'',oeEmails:[],oeLoading:false,oeErr:'',
   valItems:[{cat:'',desc:'',qty:1,year:'',cond:'Good'}],valTId:'',valResult:null,valLoading:false,valErr:'',
   docType:'capability',docTId:'',docName:'Russ Brick',docCo:'Reclaim Solutions',docText:'',docLoading:false,docErr:''
@@ -322,13 +322,42 @@ function renderTargets() {
   var fetchBtn='<button class="btn sm" id="ai-fetch-btn"'+(S.fetching?' disabled':'')+'>'+(S.fetching?'FETCHING...':'AI FETCH')+'</button>';
   var addBtn='<button class="btn sm g" id="add-tgt-btn">+ NEW TARGET</button>';
   var errBox=S.fetchErr?'<div class="warn" style="margin-bottom:12px">'+esc(S.fetchErr)+'</div>':'';
-  html('p-targets','<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px"><div><div class="lbl ac">// WARN ACT TARGETS</div><div class="ttl">Target Companies</div><div class="sub" style="margin-bottom:0">'+S.targets.length+' companies - click to view details</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+fbtns+addBtn+fetchBtn+'</div></div>'+errBox+'<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>');
+  var resultsBox='';
+  if(S.fetchResults && S.fetchResults.length){
+    var rrows=S.fetchResults.map(function(t,i){
+      return '<div style="display:grid;grid-template-columns:1fr 90px 130px 90px 110px;gap:10px;align-items:center;padding:10px 12px;background:var(--s2);border:1px solid var(--bd);border-radius:3px;margin-bottom:6px"><div><div style="font-size:12px;font-weight:700">'+esc(t.company)+'</div><div style="font-size:9px;color:var(--td)">'+esc(t.location)+' - '+esc(t.industry)+'</div></div><div style="font-size:10px;color:var(--tm)">'+t.workers+' wkrs</div><div style="font-size:11px;color:var(--grn);font-weight:700">'+fmt(t.low)+'-'+fmt(t.high)+'</div>'+bdg(t.priority)+'<button class="btn sm g" data-add-fr="'+i+'">+ ADD</button></div>';
+    }).join('');
+    resultsBox='<div class="card" style="margin-bottom:16px;border-color:var(--acc)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div class="lbl ac" style="margin-bottom:0">// WARN SEARCH RESULTS ('+S.fetchResults.length+')</div><div style="display:flex;gap:8px"><button class="btn sm g" id="add-all-fr">ADD ALL</button><button class="btn sm m" id="dismiss-fr">DISMISS</button></div></div>'+rrows+'</div>';
+  }
+  html('p-targets','<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px"><div><div class="lbl ac">// WARN ACT TARGETS</div><div class="ttl">Target Companies</div><div class="sub" style="margin-bottom:0">'+S.targets.length+' companies - click to view details</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+fbtns+addBtn+fetchBtn+'</div></div>'+errBox+resultsBox+'<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>');
   el('p-targets').addEventListener('click',function(e){
     if(e.target.id==='add-tgt-btn'){startAdd();return;}
     if(e.target.id==='ai-fetch-btn'){aiFetchTargets();return;}
+    if(e.target.id==='dismiss-fr'){S.fetchResults=[];renderTargets();return;}
+    if(e.target.id==='add-all-fr'){addAllFetched();return;}
+    var ab=e.target.closest('[data-add-fr]');
+    if(ab){addFetchedTarget(parseInt(ab.dataset.addFr));return;}
     var r=e.target.closest('.trow');if(r){S.detailId=parseInt(r.dataset.id);renderTargets();return;}
     var f=e.target.closest('[data-f]');if(f){S.filterP=f.dataset.f;renderTargets();}
   });
+}
+
+function addFetchedTarget(i){
+  var t=S.fetchResults[i];if(!t)return;
+  var maxId=S.targets.reduce(function(m,x){return Math.max(m,x.id);},0);
+  S.targets.push({id:maxId+1,company:t.company,location:t.location,industry:t.industry,workers:t.workers,date:t.date,assets:t.assets,low:t.low,high:t.high,priority:t.priority,stage:'Prospecting',contact:'',notes:t.notes});
+  S.fetchResults.splice(i,1);
+  saveTgts();updateStatus();renderTargets();
+}
+
+function addAllFetched(){
+  var maxId=S.targets.reduce(function(m,x){return Math.max(m,x.id);},0);
+  S.fetchResults.forEach(function(t){
+    maxId++;
+    S.targets.push({id:maxId,company:t.company,location:t.location,industry:t.industry,workers:t.workers,date:t.date,assets:t.assets,low:t.low,high:t.high,priority:t.priority,stage:'Prospecting',contact:'',notes:t.notes});
+  });
+  S.fetchResults=[];
+  saveTgts();updateStatus();renderTargets();
 }
 
 function startAdd(){
@@ -374,17 +403,14 @@ function aiFetchTargets(){
     var first=clean.indexOf('{'),last=clean.lastIndexOf('}');
     if(first>=0&&last>first)clean=clean.substring(first,last+1);
     var parsed=JSON.parse(clean);
-    var maxId=S.targets.reduce(function(m,t){return Math.max(m,t.id);},0);
-    (parsed.targets||[]).forEach(function(t){
-      maxId++;
-      S.targets.push({
-        id:maxId,company:t.company||'',location:t.location||'',industry:t.industry||'',
+    S.fetchResults=(parsed.targets||[]).map(function(t){
+      return {
+        company:t.company||'',location:t.location||'',industry:t.industry||'',
         workers:parseInt(t.workers)||0,date:t.date||'',assets:t.assets||[],
         low:parseInt(t.low)||0,high:parseInt(t.high)||0,
-        priority:t.priority||'medium',stage:'Prospecting',contact:'',notes:t.notes||''
-      });
+        priority:t.priority||'medium',notes:t.notes||''
+      };
     });
-    saveTgts();updateStatus();
     S.fetching=false;renderTargets();
   }).catch(function(e){
     S.fetchErr='Fetch failed: '+e.message;
