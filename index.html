@@ -186,6 +186,7 @@ var DOC_TYPES = [
 
 var S = {
   tab:'dashboard',targets:[],detailId:null,filterP:'all',
+  adding:false,newTgt:null,fetching:false,fetchErr:'',fetchRegion:'New Jersey',
   oeId:'',oeEmails:[],oeLoading:false,oeErr:'',
   valItems:[{cat:'',desc:'',qty:1,year:'',cond:'Good'}],valTId:'',valResult:null,valLoading:false,valErr:'',
   docType:'capability',docTId:'',docName:'Russ Brick',docCo:'Reclaim Solutions',docText:'',docLoading:false,docErr:''
@@ -198,14 +199,18 @@ function bdg(p){var m=PMETA[p]||PMETA.low;return '<span class="badge '+p+'">'+m.
 function el(id){return document.getElementById(id);}
 function html(id,h){el(id).innerHTML=h;}
 
-function callClaude(system, user) {
+function callClaude(system, user, opts) {
+  opts = opts || {};
+  var payload = {system:system, max_tokens:opts.max_tokens||2000, messages:[{role:'user',content:user}]};
+  if (opts.tools) payload.tools = opts.tools;
+  if (opts.model) payload.model = opts.model;
   return fetch('/.netlify/functions/claude-proxy', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({system:system,max_tokens:2000,messages:[{role:'user',content:user}]})
+    body:JSON.stringify(payload)
   }).then(function(r){return r.json();}).then(function(d){
     if (!d.content) throw new Error(d.error||'Proxy error');
-    return d.content[0].text;
+    return d.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('\n');
   });
 }
 
@@ -310,11 +315,88 @@ function renderDash() {
 
 function renderTargets() {
   if (S.detailId) {renderDetail();return;}
+  if (S.adding) {renderAddForm();return;}
   var filtered=S.filterP==='all'?S.targets:S.targets.filter(function(t){return t.priority===S.filterP;});
   var fbtns=['all','critical','high','medium'].map(function(f){return '<button class="btn sm'+(f===S.filterP?'':' m')+'" data-f="'+f+'">'+f.toUpperCase()+'</button>';}).join('');
   var rows=filtered.map(function(t){return '<div class="trow" data-id="'+t.id+'"><div><div style="font-size:13px;font-weight:700;margin-bottom:2px">'+esc(t.company)+'</div><div style="font-size:10px;color:var(--td)">'+esc(t.location)+' - '+esc(t.industry)+'</div></div><div><div class="lbl" style="margin-bottom:2px">WORKERS</div><div style="font-size:12px;color:var(--tm)">'+t.workers+'</div></div><div><div class="lbl" style="margin-bottom:2px">RECOVERY</div><div style="font-size:12px;color:var(--grn);font-weight:700">'+fmt(t.low)+'-'+fmt(t.high)+'</div><div style="font-size:9px;color:var(--acc)">fee: '+fee(t.high)+'</div></div>'+bdg(t.priority)+'<div style="text-align:right"><div style="font-size:9px;color:'+(SCLR[t.stage]||'var(--td)')+';letter-spacing:1.5px;font-weight:700">'+t.stage.toUpperCase()+'</div>'+(t.contact?'<div style="font-size:9px;color:var(--td);margin-top:3px">'+esc(t.contact)+'</div>':'')+'</div></div>';}).join('');
-  html('p-targets','<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px"><div><div class="lbl ac">// WARN ACT TARGETS</div><div class="ttl">Target Companies</div><div class="sub" style="margin-bottom:0">'+S.targets.length+' companies - click to view details</div></div><div style="display:flex;gap:8px">'+fbtns+'</div></div><div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>');
-  el('p-targets').addEventListener('click',function(e){var r=e.target.closest('.trow');if(r){S.detailId=parseInt(r.dataset.id);renderTargets();return;}var f=e.target.closest('[data-f]');if(f){S.filterP=f.dataset.f;renderTargets();}});
+  var fetchBtn='<button class="btn sm" id="ai-fetch-btn"'+(S.fetching?' disabled':'')+'>'+(S.fetching?'FETCHING...':'AI FETCH')+'</button>';
+  var addBtn='<button class="btn sm g" id="add-tgt-btn">+ NEW TARGET</button>';
+  var errBox=S.fetchErr?'<div class="warn" style="margin-bottom:12px">'+esc(S.fetchErr)+'</div>':'';
+  html('p-targets','<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px"><div><div class="lbl ac">// WARN ACT TARGETS</div><div class="ttl">Target Companies</div><div class="sub" style="margin-bottom:0">'+S.targets.length+' companies - click to view details</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+fbtns+addBtn+fetchBtn+'</div></div>'+errBox+'<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>');
+  el('p-targets').addEventListener('click',function(e){
+    if(e.target.id==='add-tgt-btn'){startAdd();return;}
+    if(e.target.id==='ai-fetch-btn'){aiFetchTargets();return;}
+    var r=e.target.closest('.trow');if(r){S.detailId=parseInt(r.dataset.id);renderTargets();return;}
+    var f=e.target.closest('[data-f]');if(f){S.filterP=f.dataset.f;renderTargets();}
+  });
+}
+
+function startAdd(){
+  S.adding=true;
+  S.newTgt={company:'',location:'',industry:'',workers:'',date:'',assets:'',low:'',high:'',priority:'medium',contact:'',notes:''};
+  renderTargets();
+}
+
+function renderAddForm(){
+  var n=S.newTgt;
+  var po=Object.keys(PMETA).map(function(p){return '<option value="'+p+'"'+(p===n.priority?' selected':'')+'>'+p.toUpperCase()+'</option>';}).join('');
+  function row(label,key,ph,type){return '<div style="margin-bottom:10px"><div class="lbl">'+label+'</div><input class="inp" type="'+(type||'text')+'" data-nk="'+key+'" value="'+esc(n[key])+'" placeholder="'+ph+'" /></div>';}
+  html('p-targets','<div style="display:flex;gap:10px;align-items:center;margin-bottom:20px"><button class="btn m" id="cancel-add">CANCEL</button><div style="font-size:18px;font-weight:700">New Target</div></div><div class="g2"><div class="card">'+row('COMPANY','company','Acme Corp')+row('LOCATION','location','City, ST')+row('INDUSTRY','industry','Manufacturing')+row('WORKERS','workers','120','number')+row('WARN DATE','date','Sep 2025')+'<div style="margin-bottom:10px"><div class="lbl">PRIORITY</div><select id="new-prio">'+po+'</select></div></div><div class="card">'+row('RECOVERY LOW ($)','low','100000','number')+row('RECOVERY HIGH ($)','high','500000','number')+row('CONTACT','contact','CFO name / email')+'<div style="margin-bottom:10px"><div class="lbl">ASSETS (one per line)</div><textarea data-nk="assets" rows="5" placeholder="Forklifts\nConveyor systems\nRacking">'+esc(n.assets)+'</textarea></div><div style="margin-bottom:10px"><div class="lbl">NOTES</div><textarea data-nk="notes" rows="3">'+esc(n.notes)+'</textarea></div><button class="btn full g" id="save-add">SAVE TARGET</button></div></div>');
+  el('p-targets').addEventListener('input',function(e){var k=e.target.dataset.nk;if(k)S.newTgt[k]=e.target.value;});
+  el('cancel-add').addEventListener('click',function(){S.adding=false;renderTargets();});
+  el('new-prio').addEventListener('change',function(){S.newTgt.priority=this.value;});
+  el('save-add').addEventListener('click',function(){
+    var n=S.newTgt;
+    if(!n.company){window.alert('Company name required');return;}
+    var maxId=S.targets.reduce(function(m,t){return Math.max(m,t.id);},0);
+    S.targets.push({
+      id:maxId+1,company:n.company,location:n.location,industry:n.industry,
+      workers:parseInt(n.workers)||0,date:n.date,
+      assets:n.assets.split('\n').map(function(s){return s.trim();}).filter(function(s){return s;}),
+      low:parseInt(n.low)||0,high:parseInt(n.high)||0,
+      priority:n.priority,stage:'Prospecting',contact:n.contact,notes:n.notes
+    });
+    saveTgts();updateStatus();
+    S.adding=false;S.newTgt=null;renderTargets();
+  });
+}
+
+function aiFetchTargets(){
+  var region=window.prompt('Region/criteria for new WARN Act targets:', S.fetchRegion||'New Jersey');
+  if(!region)return;
+  S.fetchRegion=region;S.fetching=true;S.fetchErr='';renderTargets();
+  callClaude(
+    'You are a research assistant for an industrial asset recovery brokerage. Use web search to find recent WARN Act filings and company shutdowns. Respond with valid JSON only, no prose, no markdown fences.',
+    'Search the web for recent WARN Act filings, plant closures, and company shutdowns in '+region+' from the last 6 months. Find 5 companies with significant physical/industrial assets (manufacturing equipment, vehicles, machinery, IT, food processing, etc - NOT pure software/services). For each, return: company, location, industry, workers, date (Mon YYYY), assets (array of 4-6 asset categories), low and high (estimated USD recovery range), priority (critical|high|medium|low), notes (1-2 sentence broker insight). Return JSON only: {"targets":[{"company":"","location":"","industry":"","workers":0,"date":"","assets":[],"low":0,"high":0,"priority":"","notes":""}]}',
+    {tools:[{type:'web_search_20250305',name:'web_search',max_uses:5}], max_tokens:4000}
+  ).then(function(text){
+    var clean=text.replace(/```json|```/g,'').trim();
+    var first=clean.indexOf('{'),last=clean.lastIndexOf('}');
+    if(first>=0&&last>first)clean=clean.substring(first,last+1);
+    var parsed=JSON.parse(clean);
+    var maxId=S.targets.reduce(function(m,t){return Math.max(m,t.id);},0);
+    (parsed.targets||[]).forEach(function(t){
+      maxId++;
+      S.targets.push({
+        id:maxId,company:t.company||'',location:t.location||'',industry:t.industry||'',
+        workers:parseInt(t.workers)||0,date:t.date||'',assets:t.assets||[],
+        low:parseInt(t.low)||0,high:parseInt(t.high)||0,
+        priority:t.priority||'medium',stage:'Prospecting',contact:'',notes:t.notes||''
+      });
+    });
+    saveTgts();updateStatus();
+    S.fetching=false;renderTargets();
+  }).catch(function(e){
+    S.fetchErr='Fetch failed: '+e.message;
+    S.fetching=false;renderTargets();
+  });
+}
+
+function deleteTarget(id){
+  if(!window.confirm('Delete this target? This cannot be undone.'))return;
+  S.targets=S.targets.filter(function(t){return t.id!==id;});
+  saveTgts();updateStatus();
+  S.detailId=null;renderTargets();
 }
 
 function renderDetail() {
@@ -323,9 +405,10 @@ function renderDetail() {
   var so=STAGES.map(function(s){return '<option value="'+s+'"'+(s===t.stage?' selected':'')+'>'+s+'</option>';}).join('');
   var po=Object.keys(PMETA).map(function(p){return '<option value="'+p+'"'+(p===t.priority?' selected':'')+'>'+p+'</option>';}).join('');
   var assets=t.assets.map(function(a){return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd)"><div style="width:4px;height:4px;background:var(--acc);border-radius:50%;flex-shrink:0"></div><span style="font-size:11px;color:var(--tm)">'+esc(a)+'</span></div>';}).join('');
-  html('p-targets','<div style="display:flex;gap:10px;align-items:center;margin-bottom:20px"><button class="btn" id="backbtn">BACK</button><div style="font-size:18px;font-weight:700">'+esc(t.company)+'</div>'+bdg(t.priority)+'</div><div class="g2"><div style="display:flex;flex-direction:column;gap:12px"><div class="card"><div class="lbl ac" style="margin-bottom:12px">// COMPANY INFO</div>'+[['Location',t.location],['Industry',t.industry],['Workers',t.workers],['Date',t.date]].map(function(kv){return '<div style="display:flex;gap:12px;margin-bottom:8px"><span style="font-size:9px;color:var(--td);letter-spacing:1.5px;min-width:64px">'+kv[0].toUpperCase()+'</span><span style="font-size:12px">'+esc(kv[1])+'</span></div>';}).join('')+'</div><div class="card"><div class="lbl ac" style="margin-bottom:12px">// RECOVERY</div><div class="g2"><div><div class="lbl">RANGE</div><div style="font-size:16px;color:var(--grn);font-weight:700">'+fmt(t.low)+'-'+fmt(t.high)+'</div></div><div><div class="lbl">YOUR FEE</div><div style="font-size:16px;color:var(--acc);font-weight:700">'+fee(t.low)+'-'+fee(t.high)+'</div></div></div></div><div class="card"><div class="lbl" style="margin-bottom:6px">STAGE</div><select id="sel-stage">'+so+'</select><div class="lbl" style="margin-top:12px;margin-bottom:6px">PRIORITY</div><select id="sel-prio">'+po+'</select><div class="lbl" style="margin-top:12px;margin-bottom:6px">CONTACT</div><input class="inp" type="text" id="inp-contact" value="'+esc(t.contact)+'" placeholder="CFO name, email..." /></div></div><div style="display:flex;flex-direction:column;gap:12px"><div class="card"><div class="lbl ac" style="margin-bottom:12px">// ASSETS</div>'+assets+'</div><div class="card"><div class="lbl" style="margin-bottom:6px">NOTES</div><textarea id="inp-notes" rows="7">'+esc(t.notes)+'</textarea></div></div></div>');
+  html('p-targets','<div style="display:flex;gap:10px;align-items:center;margin-bottom:20px"><button class="btn" id="backbtn">BACK</button><div style="font-size:18px;font-weight:700;flex:1">'+esc(t.company)+'</div>'+bdg(t.priority)+'<button class="btn r" id="del-tgt">DELETE</button></div><div class="g2"><div style="display:flex;flex-direction:column;gap:12px"><div class="card"><div class="lbl ac" style="margin-bottom:12px">// COMPANY INFO</div>'+[['Location',t.location],['Industry',t.industry],['Workers',t.workers],['Date',t.date]].map(function(kv){return '<div style="display:flex;gap:12px;margin-bottom:8px"><span style="font-size:9px;color:var(--td);letter-spacing:1.5px;min-width:64px">'+kv[0].toUpperCase()+'</span><span style="font-size:12px">'+esc(kv[1])+'</span></div>';}).join('')+'</div><div class="card"><div class="lbl ac" style="margin-bottom:12px">// RECOVERY</div><div class="g2"><div><div class="lbl">RANGE</div><div style="font-size:16px;color:var(--grn);font-weight:700">'+fmt(t.low)+'-'+fmt(t.high)+'</div></div><div><div class="lbl">YOUR FEE</div><div style="font-size:16px;color:var(--acc);font-weight:700">'+fee(t.low)+'-'+fee(t.high)+'</div></div></div></div><div class="card"><div class="lbl" style="margin-bottom:6px">STAGE</div><select id="sel-stage">'+so+'</select><div class="lbl" style="margin-top:12px;margin-bottom:6px">PRIORITY</div><select id="sel-prio">'+po+'</select><div class="lbl" style="margin-top:12px;margin-bottom:6px">CONTACT</div><input class="inp" type="text" id="inp-contact" value="'+esc(t.contact)+'" placeholder="CFO name, email..." /></div></div><div style="display:flex;flex-direction:column;gap:12px"><div class="card"><div class="lbl ac" style="margin-bottom:12px">// ASSETS</div>'+assets+'</div><div class="card"><div class="lbl" style="margin-bottom:6px">NOTES</div><textarea id="inp-notes" rows="7">'+esc(t.notes)+'</textarea></div></div></div>');
 
 el('backbtn').addEventListener('click',function(){S.detailId=null;renderTargets();});
+el('del-tgt').addEventListener('click',function(){deleteTarget(t.id);});
 el('sel-stage').addEventListener('change',function(){t.stage=this.value;saveTgts();updateStatus();});
 el('sel-prio').addEventListener('change',function(){t.priority=this.value;saveTgts();});
 el('inp-contact').addEventListener('input',function(){t.contact=this.value;saveTgts();});
